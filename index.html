@@ -533,7 +533,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
       <div style="color:var(--ink-soft);font-size:12.5px;margin-bottom:20px;">Вы станете HR Director — владельцем рабочего пространства</div>
       <div class="auth-field"><label>Название компании</label><input id="reg_company" type="text" placeholder="BEFIT"></div>
       <div class="auth-field"><label>Имя и фамилия</label><input id="reg_name" type="text" placeholder="Достонбек Каримов"></div>
-      <div class="auth-field"><label>Email</label><input id="reg_email" type="email" placeholder="you@befit.uz"></div>
+      <div class="auth-field"><label>Логин</label><input id="reg_email" type="text" placeholder="dostonbek" autocapitalize="none" autocorrect="off"></div>
       <div class="auth-field"><label>Пароль</label><input id="reg_password" type="password" placeholder="Минимум 4 символа"></div>
       <div class="auth-field"><label>Повторите пароль</label><input id="reg_password2" type="password" placeholder="Ещё раз"></div>
       <button class="btn btn-primary" id="btnRegisterSubmit" style="width:100%;justify-content:center;margin-top:8px;">Зарегистрировать компанию</button>
@@ -543,8 +543,8 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
 
     <div id="authLoginBlock" style="display:none;">
       <div style="color:var(--ink);font-size:15px;font-weight:600;margin-bottom:4px;">Вход</div>
-      <div style="color:var(--ink-soft);font-size:12.5px;margin-bottom:20px;">Введите email и пароль, выданные HR Director</div>
-      <div class="auth-field"><label>Email</label><input id="login_email" type="email" placeholder="you@befit.uz"></div>
+      <div style="color:var(--ink-soft);font-size:12.5px;margin-bottom:20px;">Введите логин и пароль, выданные HR Director</div>
+      <div class="auth-field"><label>Логин</label><input id="login_email" type="text" placeholder="dostonbek" autocapitalize="none" autocorrect="off"></div>
       <div class="auth-field"><label>Пароль</label><input id="login_password" type="password" placeholder="Пароль"></div>
       <button class="btn btn-primary" id="btnLoginSubmit" style="width:100%;justify-content:center;margin-top:8px;">Войти</button>
       <div id="authLoginError" style="color:#ff6b6b;font-size:12.5px;margin-top:10px;display:none;"></div>
@@ -1008,7 +1008,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
           <div class="mac-select-menu" id="team_roleMenu"></div>
         </div>
       </div>
-      <div class="field"><label>Email</label><input id="team_email" type="email" placeholder="name@befit.uz"></div>
+      <div class="field"><label>Логин</label><input id="team_email" type="text" placeholder="dostonbek" autocapitalize="none" autocorrect="off"></div>
       <div class="field">
         <label>Пароль</label>
         <div style="display:flex;gap:8px;">
@@ -1412,7 +1412,8 @@ async function loadTeamFromDB(){
 }
 async function addTeamMember({name, email, password, role}){
   try{
-    const { data: signData, error: signErr } = await sb.auth.signUp({ email, password });
+    const authEmail = loginToInternalEmail(email);
+    const { data: signData, error: signErr } = await sb.auth.signUp({ email: authEmail, password });
     if(signErr) throw signErr;
     const newAuthId = signData.user ? signData.user.id : null;
     const { error: insErr } = await sb.from('team_members').insert({
@@ -1422,7 +1423,7 @@ async function addTeamMember({name, email, password, role}){
     return true;
   }catch(e){
     console.error('addTeamMember failed', e);
-    showToast(e.message === 'User already registered' ? 'Этот email уже зарегистрирован' : 'Не удалось добавить сотрудника', 'warn');
+    showToast(e.message === 'User already registered' ? 'Этот логин уже занят' : 'Не удалось добавить сотрудника', 'warn');
     return false;
   }
 }
@@ -3852,15 +3853,21 @@ async function completeLogin(user){
   startAutoRefresh();
 }
 
+function loginToInternalEmail(login){
+  const clean = (login||'').trim().toLowerCase().replace(/[^a-z0-9._-]/g, '');
+  return clean + '@onehire.internal';
+}
+
 document.getElementById('btnRegisterSubmit').addEventListener('click', async ()=>{
   const companyName = document.getElementById('reg_company').value.trim();
   const name = document.getElementById('reg_name').value.trim();
-  const email = document.getElementById('reg_email').value.trim().toLowerCase();
+  const login = document.getElementById('reg_email').value.trim().toLowerCase();
+  const email = loginToInternalEmail(login);
   const pass = document.getElementById('reg_password').value;
   const pass2 = document.getElementById('reg_password2').value;
   const errEl = document.getElementById('authRegisterError');
   errEl.style.display = 'none';
-  if(!companyName || !name || !email || !pass){ errEl.textContent = 'Заполните все поля'; errEl.style.display=''; return; }
+  if(!companyName || !name || !login || !pass){ errEl.textContent = 'Заполните все поля'; errEl.style.display=''; return; }
   if(pass.length < 4){ errEl.textContent = 'Пароль слишком короткий (минимум 4 символа)'; errEl.style.display=''; return; }
   if(pass !== pass2){ errEl.textContent = 'Пароли не совпадают'; errEl.style.display=''; return; }
 
@@ -3869,23 +3876,17 @@ document.getElementById('btnRegisterSubmit').addEventListener('click', async ()=
   try{
     const { data: signData, error: signErr } = await sb.auth.signUp({ email, password: pass });
     if(signErr){
-      errEl.textContent = signErr.message === 'User already registered' ? 'Этот email уже зарегистрирован' : 'Не удалось зарегистрироваться — попробуйте снова';
+      errEl.textContent = signErr.message === 'User already registered' ? 'Этот логин уже занят' : 'Не удалось зарегистрироваться — попробуйте снова';
       errEl.style.display = '';
-      return;
-    }
-    if(!signData.session){
-      errEl.textContent = '';
-      showToast('Проверьте почту и подтвердите email по ссылке, затем войдите', 'warn');
-      showAuthScreen('login');
       return;
     }
     const { data: companyRow, error: compErr } = await sb.from('companies').insert({ name: companyName }).select().single();
     if(compErr) throw compErr;
     const { data: tmRow, error: tmErr } = await sb.from('team_members').insert({
-      company_id: companyRow.id, auth_user_id: signData.user.id, name, email, role: 'hr', is_owner: true
+      company_id: companyRow.id, auth_user_id: signData.user.id, name, email: login, role: 'hr', is_owner: true
     }).select().single();
     if(tmErr) throw tmErr;
-    const user = { id: tmRow.id, companyId: companyRow.id, authUserId: signData.user.id, name, email, role: 'hr', isOwner: true };
+    const user = { id: tmRow.id, companyId: companyRow.id, authUserId: signData.user.id, name, email: login, role: 'hr', isOwner: true };
     showToast('Компания зарегистрирована. Добро пожаловать!');
     await completeLogin(user);
   }catch(e){
@@ -3898,7 +3899,8 @@ document.getElementById('btnRegisterSubmit').addEventListener('click', async ()=
 });
 
 document.getElementById('btnLoginSubmit').addEventListener('click', async ()=>{
-  const email = document.getElementById('login_email').value.trim().toLowerCase();
+  const login = document.getElementById('login_email').value.trim().toLowerCase();
+  const email = loginToInternalEmail(login);
   const pass = document.getElementById('login_password').value;
   const errEl = document.getElementById('authLoginError');
   errEl.style.display = 'none';
@@ -3907,7 +3909,7 @@ document.getElementById('btnLoginSubmit').addEventListener('click', async ()=>{
   try{
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     if(error){
-      errEl.textContent = error.message === 'Email not confirmed' ? 'Подтвердите email по ссылке из письма' : 'Неверный email или пароль';
+      errEl.textContent = 'Неверный логин или пароль';
       errEl.style.display = '';
       return;
     }
@@ -4016,7 +4018,7 @@ document.getElementById('team_save').addEventListener('click', async ()=>{
   const roleVal = document.getElementById('team_role').value;
   if(!name || !email || (!editId && !password)){ showToast('Заполните все поля', 'warn'); return; }
   const dup = state.team.find(u => u.email.toLowerCase() === email && u.id !== editId);
-  if(dup){ showToast('Этот email уже используется', 'warn'); return; }
+  if(dup){ showToast('Этот логин уже используется', 'warn'); return; }
 
   document.getElementById('team_save').disabled = true;
   let ok = false;
