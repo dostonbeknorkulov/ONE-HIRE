@@ -555,9 +555,9 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     <div id="authRegisterBlock" style="display:none;">
       <div style="color:var(--ink);font-size:15px;font-weight:600;margin-bottom:4px;">Регистрация компании</div>
       <div style="color:var(--ink-soft);font-size:12.5px;margin-bottom:20px;">Вы станете HR Director — владельцем рабочего пространства</div>
-      <div class="auth-field"><label>Название компании</label><input id="reg_company" type="text" placeholder="BEFIT"></div>
-      <div class="auth-field"><label>Имя и фамилия</label><input id="reg_name" type="text" placeholder="Достонбек Каримов"></div>
-      <div class="auth-field"><label>Логин</label><input id="reg_email" type="text" placeholder="dostonbek" autocapitalize="none" autocorrect="off"></div>
+      <div class="auth-field"><label>Название компании</label><input id="reg_company" type="text"></div>
+      <div class="auth-field"><label>Имя и фамилия</label><input id="reg_name" type="text"></div>
+      <div class="auth-field"><label>Логин</label><input id="reg_email" type="text" autocapitalize="none" autocorrect="off"></div>
       <div class="auth-field"><label>Пароль</label><input id="reg_password" type="password" placeholder="Минимум 4 символа"></div>
       <div class="auth-field"><label>Повторите пароль</label><input id="reg_password2" type="password" placeholder="Ещё раз"></div>
       <button class="btn btn-primary" id="btnRegisterSubmit" style="width:100%;justify-content:center;margin-top:8px;">Зарегистрировать компанию</button>
@@ -568,7 +568,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     <div id="authLoginBlock" style="display:none;">
       <div style="color:var(--ink);font-size:15px;font-weight:600;margin-bottom:4px;">Вход</div>
       <div style="color:var(--ink-soft);font-size:12.5px;margin-bottom:20px;">Введите логин и пароль, выданные HR Director</div>
-      <div class="auth-field"><label>Логин</label><input id="login_email" type="text" placeholder="dostonbek" autocapitalize="none" autocorrect="off"></div>
+      <div class="auth-field"><label>Логин</label><input id="login_email" type="text" autocapitalize="none" autocorrect="off"></div>
       <div class="auth-field"><label>Пароль</label><input id="login_password" type="password" placeholder="Пароль"></div>
       <button class="btn btn-primary" id="btnLoginSubmit" style="width:100%;justify-content:center;margin-top:8px;">Войти</button>
       <div id="authLoginError" style="color:#ff6b6b;font-size:12.5px;margin-top:10px;display:none;"></div>
@@ -893,7 +893,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     <div class="card">
       <div class="table-wrap" id="reserveTableWrap">
       <table>
-        <thead><tr><th>Вакансия</th><th>ФИО</th><th>Телефон</th><th>Резюме</th><th>Комментарий</th><th></th></tr></thead>
+        <thead><tr><th>Вакансия</th><th>ФИО</th><th>Телефон</th><th>Фото</th><th>Резюме</th><th>Комментарий</th><th></th></tr></thead>
         <tbody id="reserveBody"></tbody>
       </table>
       </div>
@@ -909,11 +909,11 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     <h2>Новая заявка на вакансию</h2>
     <p class="desc">Заполняет руководитель филиала. После отправки заявка попадёт к HR Director на согласование.</p>
     <div class="grid2">
-      <div class="field"><label>Филиал</label><input id="f_branch" placeholder="Например: Befit One"></div>
-      <div class="field"><label>ФИО заказщика</label><input id="f_manager" placeholder="Каримов А.А."></div>
+      <div class="field"><label>Филиал</label><input id="f_branch"></div>
+      <div class="field"><label>ФИО заказщика</label><input id="f_manager"></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Должность желаемого сотрудника</label><input id="f_position" placeholder="Например: Тренер ТЗ"></div>
+      <div class="field"><label>Должность желаемого сотрудника</label><input id="f_position"></div>
       <div class="field"><label>Количество (сколько нужно человек)</label><input id="f_headcount" type="number" min="1" value="1"></div>
     </div>
     <div class="field"><label>Причина открытия новой заявки</label><input id="f_reason" placeholder="Например: Расширение штата"></div>
@@ -939,7 +939,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
       </div>
     </div>
     <div class="grid2">
-      <div class="field"><label>ФИО кандидата</label><input id="c_name" placeholder="Ахмедов Тимур"></div>
+      <div class="field"><label>ФИО кандидата</label><input id="c_name"></div>
       <div class="field"><label>Телефон</label><input id="c_phone" placeholder="+998 90 123 45 67"></div>
     </div>
     <div class="field">
@@ -1056,7 +1056,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     <h2 id="reserveModalTitle">Добавить в резерв</h2>
     <p class="desc">Кандидат, который понравился, но сейчас нет подходящей вакансии. Останется в базе для будущего подбора.</p>
     <div class="grid2">
-      <div class="field"><label>ФИО кандидата</label><input id="rv_name" placeholder="Ахмедов Тимур"></div>
+      <div class="field"><label>ФИО кандидата</label><input id="rv_name"></div>
       <div class="field"><label>Телефон</label><input id="rv_phone" placeholder="+998 90 123 45 67"></div>
     </div>
     <div class="field"><label>Желаемая / подходящая позиция</label><input id="rv_position" placeholder="Например: Тренер ТЗ"></div>
@@ -1179,7 +1179,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
           <div class="mac-select-menu" id="team_roleMenu"></div>
         </div>
       </div>
-      <div class="field"><label>Логин</label><input id="team_email" type="text" placeholder="dostonbek" autocapitalize="none" autocorrect="off"></div>
+      <div class="field"><label>Логин</label><input id="team_email" type="text" autocapitalize="none" autocorrect="off"></div>
       <div class="field">
         <label>Пароль</label>
         <div style="display:flex;gap:8px;">
@@ -3971,12 +3971,17 @@ function renderReserve(){
   if(!tbody) return;
   const list = state.reserve || [];
   if(!list.length){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Резерв пока пуст.</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Резерв пока пуст.</td></tr>`;
     return;
   }
   tbody.innerHTML = list.map(rv=>{
     const resumeHtml = rv.resumeData
       ? `<a class="resume-link" href="${rv.resumeData}" target="_blank" rel="noopener" download="${(rv.resumeName||'resume').replace(/"/g,'')}">📄 Открыть</a>`
+      : (rv.resumePath
+          ? `<button type="button" class="resume-link" data-reserve-open-file="${rv.resumePath.replace(/"/g,'')}" style="background:none;border:none;cursor:pointer;">📄 Открыть</button>`
+          : '<span class="no-resume">—</span>');
+    const photoHtml = rv.photoPath
+      ? `<button type="button" class="resume-link" data-reserve-open-file="${rv.photoPath.replace(/"/g,'')}" style="background:none;border:none;cursor:pointer;">📷 Открыть</button>`
       : '<span class="no-resume">—</span>';
     const commentCell = rv.note
       ? `<button type="button" class="comment-pill" data-reserve-comment="${rv.id}" title="Открыть комментарий">💬 Открыть</button>`
@@ -3985,6 +3990,7 @@ function renderReserve(){
       <td>${rv.position || ''}</td>
       <td>${rv.name || ''}</td>
       <td>${rv.phone || ''}</td>
+      <td>${photoHtml}</td>
       <td>${resumeHtml}</td>
       <td>${commentCell}</td>
       <td style="white-space:nowrap;">
@@ -4001,6 +4007,18 @@ function renderReserve(){
       const rv = state.reserve.find(r=>r.id===btn.dataset.reserveComment);
       if(!rv) return;
       openReserveTextEditor(rv.id, 'Комментарий — ' + (rv.name || 'кандидат'), rv.note);
+    });
+  });
+  tbody.querySelectorAll('[data-reserve-open-file]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const path = btn.dataset.reserveOpenFile;
+      if(!path) return;
+      const original = btn.textContent;
+      btn.textContent = 'Открываю…';
+      const url = await getSignedFileUrl(path);
+      btn.textContent = original;
+      if(url) window.open(url, '_blank', 'noopener');
+      else showToast('Не удалось открыть файл', 'warn');
     });
   });
   tbody.querySelectorAll('[data-reserve-del]').forEach(btn=>{
