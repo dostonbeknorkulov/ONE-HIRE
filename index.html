@@ -4387,15 +4387,10 @@ function renderAutoResponse(){
       const resumeCell = lead.hasResume
         ? `<button type="button" class="resume-link" data-open-file="${(lead.resumePath||'').replace(/"/g,'')}" style="background:none;border:none;cursor:pointer;">📄 Открыть</button>`
         : '<span class="no-resume">—</span>';
-      const tgUser = (lead.telegramUsername||'').replace(/^@/,'');
-      const telegramCell = tgUser
-        ? `<a href="https://t.me/${encodeURIComponent(tgUser)}" target="_blank" rel="noopener">@${tgUser}</a>`
-        : '<span class="no-resume">—</span>';
       return `<tr data-lead-id="${lead.id}"${rowBg}>
         <td style="min-width:130px;">${lead.source||'—'}</td>
         <td style="min-width:190px;"><strong>${lead.name||'—'}</strong></td>
         <td class="mono" style="min-width:150px;">${lead.phone||'—'}</td>
-        <td style="min-width:140px;">${telegramCell}</td>
         <td style="min-width:100px;">${photoCell}</td>
         <td style="min-width:100px;">${resumeCell}</td>
         <td style="min-width:220px;">${recruiterCell}</td>
@@ -4409,7 +4404,7 @@ function renderAutoResponse(){
       </div>
       <div class="table-wrap">
       <table>
-        <thead><tr><th>Источник</th><th>Ф.И.О кандидата</th><th>Номер телефона</th><th>Telegram</th><th>Фото</th><th>Резюме</th><th>Рекрутёр</th></tr></thead>
+        <thead><tr><th>Источник</th><th>Ф.И.О кандидата</th><th>Номер телефона</th><th>Фото</th><th>Резюме</th><th>Рекрутёр</th></tr></thead>
         <tbody>${candRows}</tbody>
       </table>
       </div>
