@@ -893,7 +893,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     <div class="card">
       <div class="table-wrap" id="reserveTableWrap">
       <table>
-        <thead><tr><th>Вакансия</th><th>ФИО</th><th>Телефон</th><th>Telegram</th><th>Источник</th><th>Фото</th><th>Резюме</th><th>Комментарий</th><th>Принять на рассмотрение</th><th></th></tr></thead>
+        <thead><tr><th>Дата</th><th>Вакансия</th><th>ФИО</th><th>Телефон</th><th>Источник</th><th>Фото</th><th>Резюме</th><th>Комментарий</th><th>Статус</th><th></th></tr></thead>
         <tbody id="reserveBody"></tbody>
       </table>
       </div>
@@ -2767,6 +2767,12 @@ function isoToRu(iso){
   const [y,m,d] = iso.split('-');
   return `${d}.${m}.${y}`;
 }
+function fmtDateFromISO(iso){
+  if(!iso) return '—';
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('ru-RU');
+}
 function renderSchedule(){
   const dateInput = document.getElementById('schedDate');
   if(!dateInput.value){
@@ -3998,10 +4004,7 @@ function renderReserve(){
     const commentCell = rv.note
       ? `<button type="button" class="comment-pill" data-reserve-comment="${rv.id}" title="Открыть комментарий">💬 Открыть</button>`
       : `<button type="button" class="comment-pill add" data-reserve-comment="${rv.id}" title="Добавить комментарий">✏️ Добавить</button>`;
-    const tgUser = (rv.telegramUsername||'').replace(/^@/,'');
-    const telegramCell = tgUser
-      ? `<a href="https://t.me/${encodeURIComponent(tgUser)}" target="_blank" rel="noopener">@${tgUser}</a>`
-      : '<span class="no-resume">—</span>';
+    const dateCell = fmtDateFromISO(rv.addedAt);
     const sourceCell = rv.source || '<span class="no-resume">—</span>';
     const acceptCell = rv.capturedBy
       ? `<strong>${rv.capturedBy}</strong>`
@@ -4009,11 +4012,11 @@ function renderReserve(){
           ? `<button class="btn btn-primary btn-sm" data-reserve-accept="${rv.id}">Принять</button>`
           : '<span class="no-resume">—</span>');
     return `<tr data-id="${rv.id}">
-      <td>${rv.position || ''}</td>
-      <td>${rv.name || ''}</td>
-      <td>${rv.phone || ''}</td>
-      <td>${telegramCell}</td>
-      <td>${sourceCell}</td>
+      <td class="mono" style="white-space:nowrap;">${dateCell}</td>
+      <td style="white-space:nowrap;">${rv.position || ''}</td>
+      <td style="white-space:nowrap;">${rv.name || ''}</td>
+      <td class="mono" style="white-space:nowrap;">${rv.phone || ''}</td>
+      <td style="white-space:nowrap;">${sourceCell}</td>
       <td>${photoHtml}</td>
       <td>${resumeHtml}</td>
       <td>${commentCell}</td>
