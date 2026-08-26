@@ -893,7 +893,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     <div class="card">
       <div class="table-wrap" id="reserveTableWrap">
       <table>
-        <thead><tr><th>Вакансия</th><th>ФИО</th><th>Телефон</th><th>Фото</th><th>Резюме</th><th>Комментарий</th><th></th></tr></thead>
+        <thead><tr><th>Вакансия</th><th>ФИО</th><th>Телефон</th><th>Telegram</th><th>Источник</th><th>Фото</th><th>Резюме</th><th>Комментарий</th><th>Принять на рассмотрение</th><th></th></tr></thead>
         <tbody id="reserveBody"></tbody>
       </table>
       </div>
@@ -1059,7 +1059,17 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
       <div class="field"><label>ФИО кандидата</label><input id="rv_name"></div>
       <div class="field"><label>Телефон</label><input id="rv_phone" placeholder="+998 90 123 45 67"></div>
     </div>
-    <div class="field"><label>Желаемая / подходящая позиция</label><input id="rv_position" placeholder="Например: Тренер ТЗ"></div>
+    <div class="field"><label>Желаемая / подходящая позиция</label><input id="rv_position"></div>
+    <div class="field"><label>Источник</label>
+      <div class="select-wrap">
+        <button type="button" id="rv_sourceBtn" class="mac-select-btn light" style="width:100%;">
+          <span id="rv_sourceBtnLabel">Не указан</span>
+          <svg class="chev" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <select id="rv_source" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;"><option value="">Не указан</option></select>
+        <div class="mac-select-menu" id="rv_sourceMenu"></div>
+      </div>
+    </div>
     <div class="field">
       <label>Резюме (файл)</label>
       <input type="file" id="rv_resume" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
@@ -3495,6 +3505,7 @@ const cRequestMacSelect = bindMacSelect('c_request', 'c_requestBtn', 'c_requestB
 const rvmRequestMacSelect = bindMacSelect('rvm_request', 'rvm_requestBtn', 'rvm_requestBtnLabel', 'rvm_requestMenu', {placeholder: 'Выберите вакансию...'});
 const scCandidateMacSelect = bindMacSelect('sc_candidate', 'sc_candidateBtn', 'sc_candidateBtnLabel', 'sc_candidateMenu', {placeholder: 'Выберите кандидата...'});
 const cSourceMacSelect = bindMacSelect('c_source', 'c_sourceBtn', 'c_sourceBtnLabel', 'c_sourceMenu', {placeholder: 'Не указан'});
+const rvSourceMacSelect = bindMacSelect('rv_source', 'rv_sourceBtn', 'rv_sourceBtnLabel', 'rv_sourceMenu', {placeholder: 'Не указан'});
 
 const rowSelectMenu = document.getElementById('rowSelectMenu');
 let activeRowSelectBtn = null;
@@ -3971,9 +3982,10 @@ function renderReserve(){
   if(!tbody) return;
   const list = state.reserve || [];
   if(!list.length){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">Резерв пока пуст.</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="10">Резерв пока пуст.</td></tr>`;
     return;
   }
+  const canAccept = (role === 'hr' || role === 'hr_recruiting') && currentUser && (role === 'hr' || autoRecruiterNames().includes(currentUser.name));
   tbody.innerHTML = list.map(rv=>{
     const resumeHtml = rv.resumeData
       ? `<a class="resume-link" href="${rv.resumeData}" target="_blank" rel="noopener" download="${(rv.resumeName||'resume').replace(/"/g,'')}">📄 Открыть</a>`
@@ -3986,13 +3998,26 @@ function renderReserve(){
     const commentCell = rv.note
       ? `<button type="button" class="comment-pill" data-reserve-comment="${rv.id}" title="Открыть комментарий">💬 Открыть</button>`
       : `<button type="button" class="comment-pill add" data-reserve-comment="${rv.id}" title="Добавить комментарий">✏️ Добавить</button>`;
+    const tgUser = (rv.telegramUsername||'').replace(/^@/,'');
+    const telegramCell = tgUser
+      ? `<a href="https://t.me/${encodeURIComponent(tgUser)}" target="_blank" rel="noopener">@${tgUser}</a>`
+      : '<span class="no-resume">—</span>';
+    const sourceCell = rv.source || '<span class="no-resume">—</span>';
+    const acceptCell = rv.capturedBy
+      ? `<strong>${rv.capturedBy}</strong>`
+      : (canAccept
+          ? `<button class="btn btn-primary btn-sm" data-reserve-accept="${rv.id}">Принять</button>`
+          : '<span class="no-resume">—</span>');
     return `<tr data-id="${rv.id}">
       <td>${rv.position || ''}</td>
       <td>${rv.name || ''}</td>
       <td>${rv.phone || ''}</td>
+      <td>${telegramCell}</td>
+      <td>${sourceCell}</td>
       <td>${photoHtml}</td>
       <td>${resumeHtml}</td>
       <td>${commentCell}</td>
+      <td>${acceptCell}</td>
       <td style="white-space:nowrap;">
         <button class="icon-btn" data-reserve-edit="${rv.id}" title="Изменить">✎</button>
         <button class="icon-btn" data-reserve-del="${rv.id}" title="Удалить">✕</button>
@@ -4031,6 +4056,50 @@ function renderReserve(){
       showToast('Удалено из резерва');
     });
   });
+  tbody.querySelectorAll('[data-reserve-accept]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const rvId = btn.dataset.reserveAccept;
+      const rv = (state.reserve||[]).find(r=>r.id===rvId);
+      if(!rv || !currentUser) return;
+      btn.disabled = true; btn.textContent = 'Принимаю…';
+      let resumeName = rv.resumeName || '', resumeData = rv.resumeData || '';
+      if(!resumeData && rv.resumePath){
+        try{
+          const url = await getSignedFileUrl(rv.resumePath);
+          if(url){
+            const resp = await fetch(url);
+            const blob = await resp.blob();
+            resumeData = await new Promise((res)=>{ const r = new FileReader(); r.onload = ()=>res(r.result); r.readAsDataURL(blob); });
+            resumeName = resumeName || ('Резюме_' + (rv.name||'кандидат').split(' ')[0] + '.pdf');
+          }
+        }catch(e){ console.error('reserve resume fetch failed', e); }
+      }
+      const today = todayStr();
+      const reqIdForCard = rv.requestId || '';
+      let card = state.callboard.find(c => c.date===today && c.recruiter===currentUser.name && (c.requestId||'')===reqIdForCard);
+      if(!card){
+        card = {
+          id: uid(), date: today, createdAt: nowISO(),
+          recruiter: currentUser.name,
+          requestId: reqIdForCard,
+          positionSnapshot: rv.position || 'Без указания вакансии',
+          candidates: []
+        };
+        state.callboard.push(card);
+      }
+      card.candidates.push({
+        id: uid(), source: rv.source || '', name: rv.name || '', phone: rv.phone || '',
+        contacted: '', comment: '', interviewDate: '', interviewTime: '', outcome: '', rejectReason: '',
+        resumeName, resumeData, fromReserve: true, reserveId: rv.id
+      });
+      rv.capturedBy = currentUser.name;
+      await saveCallboard();
+      await saveReserve();
+      renderReserve();
+      renderCallboard();
+      showToast('Кандидат перенесён в Свод по кандидатам (Воронка)');
+    });
+  });
   refreshStickyHScroll();
 }
 
@@ -4044,6 +4113,14 @@ function openReserveEditor(id){
   document.getElementById('rv_name').value = rv ? (rv.name||'') : '';
   document.getElementById('rv_phone').value = rv ? (rv.phone||'') : '';
   document.getElementById('rv_position').value = rv ? (rv.position||'') : '';
+  // Записи, созданные ботом, приходят с источником "Telegram-бот", которого нет в общем
+  // списке SOURCE_OPTS — добавляем его отдельным пунктом, чтобы при редактировании такой
+  // записи значение не терялось и не заменялось пустым при сохранении.
+  const rvSourceOpts = SOURCE_OPTS.slice();
+  if(rv && rv.source && !rvSourceOpts.includes(rv.source)) rvSourceOpts.push(rv.source);
+  document.getElementById('rv_source').innerHTML = '<option value="">Не указан</option>' + rvSourceOpts.map(s=>`<option value="${s}">${s}</option>`).join('');
+  document.getElementById('rv_source').value = rv ? (rv.source||'') : '';
+  if(rvSourceMacSelect) rvSourceMacSelect.updateLabel();
   document.getElementById('rv_note').value = rv ? (rv.note||'') : '';
   document.getElementById('rv_resume').value = '';
   document.getElementById('rv_resume_name').textContent = rv && rv.resumeName ? ('✓ ' + rv.resumeName) : '';
@@ -4077,6 +4154,7 @@ document.getElementById('saveReserve').addEventListener('click', async ()=>{
     name,
     phone: document.getElementById('rv_phone').value.trim(),
     position: document.getElementById('rv_position').value.trim(),
+    source: document.getElementById('rv_source').value,
     note: document.getElementById('rv_note').value.trim(),
     resumeName: pendingReserveResume ? pendingReserveResume.name : '',
     resumeData: pendingReserveResume ? pendingReserveResume.dataUrl : ''
@@ -4303,10 +4381,15 @@ function renderAutoResponse(){
       const resumeCell = lead.hasResume
         ? `<button type="button" class="resume-link" data-open-file="${(lead.resumePath||'').replace(/"/g,'')}" style="background:none;border:none;cursor:pointer;">📄 Открыть</button>`
         : '<span class="no-resume">—</span>';
+      const tgUser = (lead.telegramUsername||'').replace(/^@/,'');
+      const telegramCell = tgUser
+        ? `<a href="https://t.me/${encodeURIComponent(tgUser)}" target="_blank" rel="noopener">@${tgUser}</a>`
+        : '<span class="no-resume">—</span>';
       return `<tr data-lead-id="${lead.id}"${rowBg}>
         <td style="min-width:130px;">${lead.source||'—'}</td>
         <td style="min-width:190px;"><strong>${lead.name||'—'}</strong></td>
         <td class="mono" style="min-width:150px;">${lead.phone||'—'}</td>
+        <td style="min-width:140px;">${telegramCell}</td>
         <td style="min-width:100px;">${photoCell}</td>
         <td style="min-width:100px;">${resumeCell}</td>
         <td style="min-width:220px;">${recruiterCell}</td>
@@ -4320,7 +4403,7 @@ function renderAutoResponse(){
       </div>
       <div class="table-wrap">
       <table>
-        <thead><tr><th>Источник</th><th>Ф.И.О кандидата</th><th>Номер телефона</th><th>Фото</th><th>Резюме</th><th>Рекрутёр</th></tr></thead>
+        <thead><tr><th>Источник</th><th>Ф.И.О кандидата</th><th>Номер телефона</th><th>Telegram</th><th>Фото</th><th>Резюме</th><th>Рекрутёр</th></tr></thead>
         <tbody>${candRows}</tbody>
       </table>
       </div>
