@@ -4077,7 +4077,7 @@ function renderReserve(){
           }
         }catch(e){ console.error('reserve resume fetch failed', e); }
       }
-      const today = todayStr();
+      const today = new Date().toISOString().slice(0,10);
       const reqIdForCard = rv.requestId || '';
       let card = state.callboard.find(c => c.date===today && c.recruiter===currentUser.name && (c.requestId||'')===reqIdForCard);
       if(!card){
@@ -4095,7 +4095,10 @@ function renderReserve(){
         contacted: '', comment: '', interviewDate: '', interviewTime: '', outcome: '', rejectReason: '',
         resumeName, resumeData, fromReserve: true, reserveId: rv.id
       });
-      rv.capturedBy = currentUser.name;
+      // В отличие от «Авто-отклика», запись из «Резерва» при принятии полностью убирается
+      // из списка резерва — кандидат перешёл дальше по воронке, держать его дубликатом
+      // в Резерве не нужно.
+      state.reserve = state.reserve.filter(r=>r.id!==rv.id);
       await saveCallboard();
       await saveReserve();
       renderReserve();
@@ -4444,7 +4447,7 @@ function renderAutoResponse(){
           }
         }catch(e){ console.error('resume fetch failed', e); }
       }
-      const today = todayStr();
+      const today = new Date().toISOString().slice(0,10);
       const reqIdForCard = lead.requestId || '';
       let card = state.callboard.find(c => c.date===today && c.recruiter===currentUser.name && (c.requestId||'')===reqIdForCard);
       if(!card){
@@ -4568,7 +4571,8 @@ function renderCallboard(){
     const candRows = visibleIdx.map(idx=>{
       const cand = candList[idx];
       const sourceCell = (isObserver || cand.fromAuto) ? (cand.source || '<span class="no-resume">—</span>') : rowSelectHtml('source', SOURCE_OPTS, cand.source, true);
-      const nameCell = isObserver ? (cand.name || '<span class="no-resume">—</span>') : `<input class="inline" data-field="name" value="${(cand.name||'').replace(/"/g,'&quot;')}" placeholder="Ф.И.О кандидата">`;
+      const nameWidthCh = Math.max((cand.name||'').length + 2, 18);
+      const nameCell = isObserver ? (cand.name || '<span class="no-resume">—</span>') : `<input class="inline" data-field="name" value="${(cand.name||'').replace(/"/g,'&quot;')}" placeholder="Ф.И.О кандидата" style="width:${nameWidthCh}ch;">`;
       const phoneCell = isObserver ? (cand.phone || '<span class="no-resume">—</span>') : `<input class="inline" data-field="phone" value="${(cand.phone||'').replace(/"/g,'&quot;')}" placeholder="Номер телефона">`;
       const resumeLink = cand.resumeData ? `<a class="resume-link" href="${cand.resumeData}" target="_blank" rel="noopener" download="${(cand.resumeName||'resume').replace(/"/g,'')}">📄 Открыть</a>` : '';
       const resumeCellHtml = isObserver
