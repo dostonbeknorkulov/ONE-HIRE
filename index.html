@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>ONE Hire</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root{
   --bg:#EEF0F4;
@@ -97,6 +97,18 @@ h1,h2,h3,.num{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-sp
 .tab{padding:9px 18px;border-radius:12px;color:#B7BBC4;font-weight:600;font-size:13px;cursor:pointer;letter-spacing:.02em;transition:.18s cubic-bezier(.2,.9,.25,1);white-space:nowrap;flex-shrink:0;}
 .tab:hover{color:#fff;background:rgba(255,255,255,.06);}
 .tab.active{background:rgba(200,241,59,.92);color:var(--volt-ink);box-shadow:0 4px 14px rgba(200,241,59,.35), 0 1px 0 rgba(255,255,255,.5) inset;}
+.subtabs{display:flex;gap:4px;background:rgba(255,255,255,.55);padding:4px;border-radius:16px;border:1px solid rgba(20,22,27,.08);width:fit-content;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:18px;backdrop-filter:blur(14px) saturate(180%);-webkit-backdrop-filter:blur(14px) saturate(180%);}
+.subtabs::-webkit-scrollbar{display:none;}
+.subtabs .tab:not(.active){color:var(--ink-soft);}
+.subtabs .tab:not(.active):hover{color:var(--ink);background:rgba(20,22,27,.06);}
+@media (prefers-color-scheme: dark){
+  .subtabs{background:rgba(255,255,255,.06) !important;border-color:rgba(255,255,255,.12) !important;}
+  .subtabs .tab:not(.active){color:#C7CBD3 !important;}
+  .subtabs .tab:not(.active):hover{background:rgba(255,255,255,.08) !important;color:#FFFFFF !important;}
+}
+@media (max-width:720px){
+  .subtabs{width:100%;}
+}
 .role-select{display:flex;align-items:center;gap:8px;}
 .role-select label{font-size:11px;color:#9AA0AE;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
 .select-wrap{position:relative;}
@@ -153,7 +165,7 @@ h1,h2,h3,.num{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-sp
 .mac-select-item.selected{background:var(--blue);color:#fff;font-weight:700;}
 .mac-select-item .chk{opacity:0;font-size:12px;}
 .mac-select-item.selected .chk{opacity:1;}
-main{width:100%;max-width:1680px;margin:0 auto;padding:28px clamp(16px, 2.6vw, 48px) 80px;}
+main{width:100%;max-width:2200px;margin:0 auto;padding:28px clamp(16px, 2.6vw, 48px) 80px;}
 .view{display:none;}
 .view.active{display:block;}
 .view-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
@@ -177,12 +189,10 @@ main{width:100%;max-width:1680px;margin:0 auto;padding:28px clamp(16px, 2.6vw, 4
 .kpi.accent .num{color:var(--volt);}
 .kpi.accent .lbl{color:#9AA0AE;}
 .kpi.kpi-wide{grid-column:1/-1;}
-.intern-week-list{display:flex;flex-direction:column;gap:8px;}
-.intern-week-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap;}
-.intern-week-row:first-child{border-top:none;}
-.intern-week-name{font-weight:600;flex:1 1 160px;}
-.intern-week-pos{color:var(--ink-soft);font-size:12.5px;flex:1 1 140px;}
-.intern-week-date{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
+.intern-week-table{cursor:default;}
+.intern-week-table th{font-size:11.5px;color:var(--ink-soft);text-align:left;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.08);white-space:nowrap;}
+.intern-week-table td{font-size:12.5px;padding:8px 10px;border-top:1px solid rgba(255,255,255,.06);white-space:nowrap;}
+.intern-week-table .phone-reveal-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:100px;padding:4px 10px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:'Inter';}
 .kpi.multi{display:flex;flex-direction:column;justify-content:center;gap:8px;}
 .kpi.multi .kpi-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
 .kpi.multi .kpi-row .kpi-row-lbl{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;}
@@ -192,6 +202,10 @@ main{width:100%;max-width:1680px;margin:0 auto;padding:28px clamp(16px, 2.6vw, 4
 .search-bar input{width:100%;max-width:280px;border:1px solid rgba(20,22,27,.14);border-radius:10px;padding:8px 12px;font-family:'Inter';font-size:12.5px;background:rgba(255,255,255,.65);}
 .search-bar input:focus{outline:2px solid var(--blue);background:#fff;}
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.sticky-hscroll{position:fixed;left:0;right:0;bottom:0;height:16px;overflow-x:scroll;overflow-y:hidden;z-index:500;background:var(--surface-solid);border-top:1px solid var(--line);}
+.sticky-hscroll-inner{height:1px;}
+#reqTableWrap, #candTableWrap, #schedTableWrap, #reserveTableWrap, #cbRejectedTableWrap{scrollbar-width:none;-ms-overflow-style:none;}
+#reqTableWrap::-webkit-scrollbar, #candTableWrap::-webkit-scrollbar, #schedTableWrap::-webkit-scrollbar, #reserveTableWrap::-webkit-scrollbar, #cbRejectedTableWrap::-webkit-scrollbar{display:none;height:0;}
 table{width:100%;border-collapse:collapse;}
 #view-requests table{width:auto;}
 #view-requests td, #view-requests th{white-space:nowrap;}
@@ -203,10 +217,10 @@ td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle;f
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(255,255,255,.4);}
 .empty-row td{color:var(--ink-soft);text-align:center;padding:36px;font-size:13px;}
-.sc-col-name{width:30%;}
-.sc-col-phone{width:13%;}
-.sc-col-branch{width:13%;}
-.sc-col-position{width:15%;}
+.sc-col-name{width:26%;}
+.sc-col-phone{width:19%;white-space:nowrap;}
+.sc-col-branch{width:12%;}
+.sc-col-position{width:14%;}
 .sc-col-time{width:12%;}
 .sc-col-comment{width:17%;}
 .callboard-head{display:grid;grid-template-columns:110px 1fr 140px 32px;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.4);}
@@ -246,6 +260,12 @@ tr:hover td{background:rgba(255,255,255,.4);}
 tr.row-overdue td{background:rgba(230,60,60,.10);}
 tr.row-overdue:hover td{background:rgba(230,60,60,.16);}
 tr.row-overdue td:first-child{box-shadow:inset 3px 0 0 var(--hot);}
+tr.row-overdue-dark td{background:rgba(120,20,20,.22);}
+tr.row-overdue-dark:hover td{background:rgba(120,20,20,.30);}
+tr.row-overdue-dark td:first-child{box-shadow:inset 3px 0 0 rgba(120,20,20,.9);}
+tr.row-interviewing td{background:rgba(70,160,230,.12);}
+tr.row-interviewing:hover td{background:rgba(70,160,230,.18);}
+tr.row-interviewing td:first-child{box-shadow:inset 3px 0 0 #46A0E6;}
 .pill-warn{background:rgba(230,60,60,.14);color:var(--hot);}
 .probation-warn{display:inline-flex;align-items:center;gap:4px;color:var(--hot);font-size:11px;font-weight:600;margin-top:3px;}
 table, th, td, table select, table input, table textarea, table button{font-family:var(--font-mac);}
@@ -275,6 +295,8 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
 .resume-link{color:var(--blue);font-weight:600;text-decoration:none;font-size:12.5px;white-space:nowrap;}
 .resume-link:hover{text-decoration:underline;}
 .no-resume{color:var(--ink-soft);font-size:12.5px;}
+.unsaved-dot{display:none;width:8px;height:8px;border-radius:50%;background:var(--med);margin-right:6px;flex-shrink:0;box-shadow:0 0 0 3px rgba(232,162,38,.25);animation:unsavedPulse 1.6s ease-in-out infinite;vertical-align:middle;}
+@keyframes unsavedPulse{0%,100%{opacity:1;}50%{opacity:.45;}}
 .comment-pill{
   display:inline-flex;align-items:center;gap:5px;
   padding:5px 12px 5px 10px;border-radius:100px;
@@ -343,6 +365,8 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
 .two-col table th:nth-child(4), .two-col table td:nth-child(4){min-width:150px;white-space:nowrap;}
 .onboarded-table{min-width:1050px;}
 .archive-table{min-width:950px;}
+.table-wrap-scroll{max-height:576px;overflow-y:auto;}
+.table-wrap-scroll thead th{position:sticky;top:0;z-index:2;background:var(--surface-solid);}
 .report-split{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-bottom:26px;}
 .report-split > div{min-width:0;}
 #kpiGrid, #weeklyKpiGrid{grid-template-columns:repeat(auto-fit, minmax(min(150px,100%),1fr));margin-bottom:0;}
@@ -393,14 +417,14 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
 @media (max-width:960px){
   .topbar-top{align-items:stretch;}
   .topbar-bottom{flex-direction:column;align-items:stretch;}
-  .tabs{width:100%;order:2;}
+  .tabs{order:2;align-self:flex-start;max-width:100%;}
   .topbar-bottom > div:first-child{order:1;justify-content:space-between;}
 }
 @media (max-width:720px){
   .topbar{padding:14px 16px;gap:12px;}
   .brand .name{font-size:16px;}
   .brand .sub{font-size:10px;}
-  .tabs{width:100%;justify-content:flex-start;}
+  .tabs{max-width:100%;}
   .tab{padding:8px 14px;font-size:12.5px;}
   .role-select{width:100%;justify-content:space-between;}
   .select-wrap{flex:1;min-width:0;}
@@ -598,9 +622,10 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     <div class="tabs">
       <div class="tab active" data-view="requests">Заявки</div>
       <div class="tab" data-view="candidates">Кандидаты</div>
+      <div class="tab" data-view="callboard">Воронка</div>
+      <div class="tab" data-view="reserve">Резерв</div>
       <div class="tab" data-view="dashboard">Отчётность</div>
       <div class="tab" data-view="schedule">График собеседований</div>
-      <div class="tab" data-view="callboard">Воронка</div>
     </div>
   </div>
 </div>
@@ -611,15 +636,28 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
         <h1>Заявки на вакансию</h1>
         <p>Руководители подают заявки, HR Director согласовывает и назначает приоритет.</p>
       </div>
-      <button class="btn btn-primary" id="btnAddRequest">+ Новая заявка</button>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="select-wrap" id="reqRecruiterFilterWrap" style="display:none;min-width:190px;">
+          <button type="button" id="reqRecruiterFilterBtn" class="mac-select-btn light">
+            <span id="reqRecruiterFilterLabel">Все рекрутёры</span>
+            <svg class="chev" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="mac-select-menu" id="reqRecruiterFilterMenu"></div>
+        </div>
+        <button class="btn btn-primary" id="btnAddRequest">+ Новая заявка</button>
+      </div>
+    </div>
+    <div class="subtabs">
+      <div class="tab active" data-reqsub="open">Открытые</div>
+      <div class="tab" data-reqsub="closed">Закрытые</div>
     </div>
     <div class="card">
-      <div class="table-wrap">
+      <div class="table-wrap" id="reqTableWrap">
       <table>
         <thead>
           <tr>
             <th>№</th><th>Дата</th><th>Филиал</th><th>Руководитель</th><th>Должность</th>
-            <th>Причина</th><th>Комментарий</th><th>Статус</th><th class="col-priority">Приоритет</th><th>Рекрутер</th><th></th>
+            <th>Причина</th><th>Комментарий</th><th class="col-status-closed">Статус</th><th class="col-priority">Приоритет</th><th class="col-recruiter">Рекрутер</th><th class="col-hired-closed">Набрано</th><th id="reqLastColHead"></th>
           </tr>
         </thead>
         <tbody id="requestsBody"></tbody>
@@ -633,13 +671,31 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
         <h1>Кандидаты</h1>
         <p>Кандидаты, отправленные руководителям на рассмотрение по каждой вакансии.</p>
       </div>
-      <div style="display:flex;gap:8px;">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="select-wrap" id="candRecruiterFilterWrap" style="display:none;min-width:190px;">
+          <button type="button" id="candRecruiterFilterBtn" class="mac-select-btn light">
+            <span id="candRecruiterFilterLabel">Все рекрутёры</span>
+            <svg class="chev" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="mac-select-menu" id="candRecruiterFilterMenu"></div>
+        </div>
+        <div class="select-wrap" id="candOnboardMgrFilterWrap" style="display:none;min-width:190px;">
+          <button type="button" id="candOnboardMgrFilterBtn" class="mac-select-btn light">
+            <span id="candOnboardMgrFilterLabel">Все менеджеры</span>
+            <svg class="chev" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="mac-select-menu" id="candOnboardMgrFilterMenu"></div>
+        </div>
         <button class="btn btn-primary" id="btnSelectCandidate">Выбор кандидата</button>
         <button class="btn btn-primary" id="btnAddCandidate">+ Добавить кандидата</button>
       </div>
     </div>
+    <div class="subtabs" id="candSubtabs" style="display:none;">
+      <div class="tab active" data-candsub="recruit">Рекрутер</div>
+      <div class="tab" data-candsub="hr">Отдел кадров</div>
+    </div>
     <div class="card">
-      <div class="table-wrap">
+      <div class="table-wrap" id="candTableWrap">
       <table>
         <thead id="candidatesHead"></thead>
         <tbody id="candidatesBody"></tbody>
@@ -664,7 +720,6 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
               <input type="month" id="reportMonth" class="filter-hidden-input">
               <div class="mac-month-picker" id="reportMonthPicker"></div>
             </div>
-            <button class="btn btn-ghost btn-sm" id="btnAllTime">Все время</button>
           </div>
         </div>
         <div class="kpi-grid" id="kpiGrid"></div>
@@ -678,7 +733,6 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
               <input type="week" id="weeklyFilter" class="filter-hidden-input">
               <div class="mac-calendar" id="weeklyCalendar"></div>
             </div>
-            <button class="btn btn-ghost btn-sm" id="btnWeeklyReset">Текущая неделя</button>
           </div>
         </div>
         <div class="kpi-grid" id="weeklyKpiGrid"></div>
@@ -691,7 +745,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
           <div style="padding:14px 14px 0;">
             <div class="search-bar"><input type="text" id="onboardedSearch" placeholder="Поиск по имени..."></div>
           </div>
-          <div class="table-wrap">
+          <div class="table-wrap table-wrap-scroll">
           <table class="onboarded-table">
             <thead>
               <tr><th>Вакансия</th><th>Руководитель</th><th>ФИО</th><th>Телефон</th><th>Резюме</th><th>Документы</th><th>Комментарий HR</th><th>Комментарий руководителя</th><th>Дата офиц. оформления</th><th></th></tr>
@@ -707,7 +761,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
           <div style="padding:14px 14px 0;">
             <div class="search-bar"><input type="text" id="archiveSearch" placeholder="Поиск по имени..."></div>
           </div>
-          <div class="table-wrap">
+          <div class="table-wrap table-wrap-scroll">
           <table class="archive-table">
             <thead>
               <tr><th>Вакансия</th><th>Руководитель</th><th>ФИО</th><th>Телефон</th><th>Резюме</th><th>Причина отказа</th><th>Комментарий HR</th><th>Комментарий руководителя</th><th></th></tr>
@@ -742,7 +796,7 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
       </div>
     </div>
     <div class="card">
-      <div class="table-wrap">
+      <div class="table-wrap" id="schedTableWrap">
       <table class="schedule-table" style="table-layout:fixed;">
         <colgroup>
           <col class="sc-col-name"><col class="sc-col-phone"><col class="sc-col-branch">
@@ -762,33 +816,94 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
   <section class="view" id="view-callboard">
     <div class="view-head">
       <div>
-        <h1>ОТЧЁТНОСТЬ ПО НАЙМУ</h1>
+        <h1>ВОРОНКА</h1>
         <p>Ежедневный свод по звонкам и воронке — каждый рекрутер вносит запись за свой день.</p>
       </div>
       <button class="btn btn-primary" id="btnAddCallboard">+ Новый отчёт</button>
     </div>
-    <div class="cb-filter-row">
-      <div class="select-wrap cb-filter-recruiter">
-        <button type="button" id="cbRecruiterFilterBtn" class="mac-select-btn light">
-          <span id="cbRecruiterFilterLabel">Все рекрутёры</span>
-          <svg class="chev" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="mac-select-menu" id="cbRecruiterFilterMenu"></div>
+    <div class="subtabs">
+      <div class="tab" data-cbsub="auto">Авто-отклик</div>
+      <div class="tab active" data-cbsub="manual">Свод по кандидатам</div>
+      <div class="tab" data-cbsub="rejected">Отказ</div>
+    </div>
+    <div id="cbSubManual">
+      <div class="cb-filter-row">
+        <div class="select-wrap cb-filter-recruiter">
+          <button type="button" id="cbRecruiterFilterBtn" class="mac-select-btn light">
+            <span id="cbRecruiterFilterLabel">Все рекрутёры</span>
+            <svg class="chev" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="mac-select-menu" id="cbRecruiterFilterMenu"></div>
+        </div>
+        <div class="cb-filter-date">
+          <button type="button" id="cbDateFilterBtn" class="btn btn-ghost btn-sm"></button>
+          <input type="date" id="cbDateFilter" class="cb-hidden-date-input">
+          <div class="mac-calendar" id="cbDateFilterCal"></div>
+        </div>
+        <div class="search-bar cb-filter-search">
+          <input type="text" id="cbNameSearch" placeholder="Поиск по имени кандидата...">
+        </div>
       </div>
-      <div class="cb-filter-date">
-        <button type="button" id="cbDateFilterBtn" class="btn btn-ghost btn-sm"></button>
-        <input type="date" id="cbDateFilter" class="cb-hidden-date-input">
-        <div class="mac-calendar" id="cbDateFilterCal"></div>
+      <div class="kpi-grid" id="cbKpiGrid"></div>
+      <div id="callboardList"></div>
+    </div>
+    <div id="cbSubAuto" style="display:none;">
+      <div class="cb-filter-row">
+        <div class="cb-filter-date">
+          <button type="button" id="autoDateFilterBtn" class="btn btn-ghost btn-sm"></button>
+          <input type="date" id="autoDateFilter" class="cb-hidden-date-input">
+          <div class="mac-calendar" id="autoDateFilterCal"></div>
+        </div>
+        <div class="search-bar cb-filter-search">
+          <input type="text" id="autoNameSearch" placeholder="Поиск по имени кандидата...">
+        </div>
       </div>
-      <div class="search-bar cb-filter-search">
-        <input type="text" id="cbNameSearch" placeholder="Поиск по имени кандидата...">
+      <div class="kpi-grid" id="autoKpiGrid"></div>
+      <div id="autoResponseList"></div>
+    </div>
+    <div id="cbSubRejected" style="display:none;">
+      <div class="cb-filter-row">
+        <div class="search-bar cb-filter-search">
+          <input type="text" id="rejectedNameSearch" placeholder="Поиск по имени кандидата...">
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap" id="cbRejectedTableWrap">
+        <table>
+          <thead>
+            <tr><th>Дата</th><th>Вакансия</th><th>Источник</th><th>ФИО</th><th>Телефон</th><th>Резюме</th><th>Рекрутёр</th><th>Причина отказа</th></tr>
+          </thead>
+          <tbody id="cbRejectedBody"></tbody>
+        </table>
+        </div>
       </div>
     </div>
-    <div class="kpi-grid" id="cbKpiGrid"></div>
-    <div id="callboardList"></div>
+  </section>
+  <section class="view" id="view-reserve">
+    <div class="view-head">
+      <div>
+        <h1>Резерв</h1>
+        <p>База резюме, которые понравились, но пока не под конкретную вакансию.</p>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" id="btnReserveMatch">🤖 ИИ подбор</button>
+        <button class="btn btn-primary" id="btnAddReserve">+ Добавить в резерв</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="table-wrap" id="reserveTableWrap">
+      <table>
+        <thead><tr><th>Вакансия</th><th>ФИО</th><th>Телефон</th><th>Резюме</th><th>Комментарий</th><th></th></tr></thead>
+        <tbody id="reserveBody"></tbody>
+      </table>
+      </div>
+    </div>
   </section>
 
 </main>
+<div id="stickyHScroll" class="sticky-hscroll" style="display:none;">
+  <div id="stickyHScrollInner" class="sticky-hscroll-inner"></div>
+</div>
 <div class="overlay" id="overlayRequest">
   <div class="modal">
     <h2>Новая заявка на вакансию</h2>
@@ -797,7 +912,10 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
       <div class="field"><label>Филиал</label><input id="f_branch" placeholder="Например: Befit One"></div>
       <div class="field"><label>ФИО заказщика</label><input id="f_manager" placeholder="Каримов А.А."></div>
     </div>
-    <div class="field"><label>Должность желаемого сотрудника</label><input id="f_position" placeholder="Например: Тренер ТЗ"></div>
+    <div class="grid2">
+      <div class="field"><label>Должность желаемого сотрудника</label><input id="f_position" placeholder="Например: Тренер ТЗ"></div>
+      <div class="field"><label>Количество (сколько нужно человек)</label><input id="f_headcount" type="number" min="1" value="1"></div>
+    </div>
     <div class="field"><label>Причина открытия новой заявки</label><input id="f_reason" placeholder="Например: Расширение штата"></div>
     <div class="field"><label>Требования / комментарий</label><textarea id="f_requirements" placeholder="Опыт, сертификаты, график..."></textarea></div>
     <div class="modal-actions">
@@ -881,6 +999,15 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     </div>
   </div>
 </div>
+<div class="overlay" id="overlayChoice" style="z-index:650;">
+  <div class="modal" style="max-width:380px;">
+    <h2 id="choiceTitle">Выберите вариант</h2>
+    <div id="choiceOptionsList" style="display:flex;flex-direction:column;gap:8px;margin:14px 0;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="choiceCancel">Отмена</button>
+    </div>
+  </div>
+</div>
 <div class="overlay" id="overlayConfirm" style="z-index:600;">
   <div class="modal" style="max-width:380px;">
     <h2>Подтвердите действие</h2>
@@ -910,6 +1037,59 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
     <div class="modal-actions">
       <button class="btn btn-ghost" data-close>Отмена</button>
       <button class="btn btn-primary" id="saveManagerComment">Сохранить комментарий</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="overlayHrReject">
+  <div class="modal">
+    <h2>Отказ кандидату</h2>
+    <p class="desc">Укажите причину отказа. Кандидат сразу попадёт в архив с этим комментарием.</p>
+    <div class="field"><textarea id="hr_reject_text" placeholder="Причина отказа..." style="min-height:110px;"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>Отмена</button>
+      <button class="btn btn-primary" id="saveHrReject">Сохранить и отправить в архив</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="overlayReserve">
+  <div class="modal">
+    <h2 id="reserveModalTitle">Добавить в резерв</h2>
+    <p class="desc">Кандидат, который понравился, но сейчас нет подходящей вакансии. Останется в базе для будущего подбора.</p>
+    <div class="grid2">
+      <div class="field"><label>ФИО кандидата</label><input id="rv_name" placeholder="Ахмедов Тимур"></div>
+      <div class="field"><label>Телефон</label><input id="rv_phone" placeholder="+998 90 123 45 67"></div>
+    </div>
+    <div class="field"><label>Желаемая / подходящая позиция</label><input id="rv_position" placeholder="Например: Тренер ТЗ"></div>
+    <div class="field">
+      <label>Резюме (файл)</label>
+      <input type="file" id="rv_resume" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+      <div class="file-name" id="rv_resume_name"></div>
+    </div>
+    <div class="field"><label>Комментарий / сильные стороны</label><textarea id="rv_note" placeholder="Кратко: опыт, навыки, впечатление от собеседования..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>Отмена</button>
+      <button class="btn btn-primary" id="saveReserve">Сохранить в резерв</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="overlayReserveMatch">
+  <div class="modal" style="max-width:640px;">
+    <h2>Подбор из резерва</h2>
+    <p class="desc">ИИ сравнит требования вакансии с кандидатами в резерве и подскажет, кто подходит лучше всего.</p>
+    <div class="field"><label>Вакансия</label>
+      <div class="select-wrap">
+        <button type="button" id="rvm_requestBtn" class="mac-select-btn light" style="width:100%;">
+          <span id="rvm_requestBtnLabel">Выберите вакансию...</span>
+          <svg class="chev" width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <select id="rvm_request" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;"></select>
+        <div class="mac-select-menu" id="rvm_requestMenu"></div>
+      </div>
+    </div>
+    <div id="rvm_results" style="margin-top:14px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close>Закрыть</button>
+      <button class="btn btn-primary" id="rvm_run">Подобрать кандидатов</button>
     </div>
   </div>
 </div>
@@ -1025,8 +1205,11 @@ select.inline:disabled, input.inline:disabled{color:var(--ink-soft);}
 const BRANCH_OPTS = ["Befit One","Befit Box","Befit Pro","Befit Sky","Befit Eco"];
 const REASON_OPTS = ["Расширение штата","Замена сотрудника","Новое направление"];
 const REQ_STATUS = ["Начать поиск","Не одобрено"];
-const RECRUITER_OPTS = ["Диера HR","Достонбек HR"];
-const SOURCE_OPTS = ["HeadHunter","Телеграм","Сарафанное радио"];
+
+const SOURCE_OPTS = ["hh.uz","Телеграм","Сарафанное радио","Прямой хантинг"];
+const CONTACTED_OPTS = [{value:"yes",label:"Смогли связаться"},{value:"no",label:"Не смогли связаться"}];
+const OUTCOME_OPTS = [{value:"progress",label:"Принять на рассмотрение"},{value:"rejected",label:"Отказ"},{value:"reserve",label:"Резерв"}];
+const AUTO_RESPONSE_SOURCES = ["Telegram-бот","hh.uz","Instagram"];
 const OVERDUE_MANAGER_DAYS = 3;
 const PROBATION_REMINDER_DAYS = 7;
 const PRIORITY_OPTS = ["Горящая","Средняя","Низкая"];
@@ -1051,11 +1234,26 @@ const MAX_DOC_BYTES = 3 * 1024 * 1024;
 const SCHEDULE_ROWS_COUNT = 15;
 const MAX_RESUME_BYTES = 3 * 1024 * 1024;
 
-const SUPABASE_URL = "https://lbqweuszpyxdoddnxmox.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Eq5mfBEgPzTtn1Tk-f5KJw_1iXkieLT";
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ===== РЕАЛЬНЫЙ SUPABASE-БЭКЕНД =====
+// anon-ключ безопасен для клиентского кода — доступ к данным ограничен
+// политиками RLS на стороне базы (изоляция по company_id).
+const SUPABASE_URL = 'https://lbqweuszpyxdoddnxmox.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxicXdldXN6cHl4ZG9kZG54bW94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NDM1NTIsImV4cCI6MjEwMTIxOTU1Mn0.NFrW4RhUB4Md8kmBZR4l7iz_7XyNLqYGYczOVuMogwg';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let state = { requests: [], candidates: [], schedule: {}, callboard: [], team: [] };
+// Приватный bucket для файлов резюме/фото, которые кандидаты присылают через Telegram-бота
+const CANDIDATE_FILES_BUCKET = 'candidate-files';
+async function getSignedFileUrl(path){
+  if(!path) return '';
+  try{
+    const { data, error } = await sb.storage.from(CANDIDATE_FILES_BUCKET).createSignedUrl(path, 3600);
+    if(error || !data) return '';
+    return data.signedUrl;
+  }catch(e){ return ''; }
+}
+// ===== КОНЕЦ ИНИЦИАЛИЗАЦИИ БЭКЕНДА =====
+
+let state = { requests: [], candidates: [], schedule: {}, callboard: [], team: [], reserve: [] };
 let role = null;
 let currentUser = null;
 let companyId = null;
@@ -1064,6 +1262,7 @@ let pendingResume = null;
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function todayStr(){ const d=new Date(); return d.toLocaleDateString('ru-RU'); }
 function nowISO(){ return new Date().toISOString(); }
+function daysAgoISO(n){ const d = new Date(); d.setDate(d.getDate()-n); return d.toISOString(); }
 function daysSince(iso){
   if(!iso) return null;
   const then = new Date(iso);
@@ -1072,9 +1271,13 @@ function daysSince(iso){
   return Math.max(0, Math.floor(diff / 86400000));
 }
 function daysInStage(c){
-  if(c.stageAt) return daysSince(c.stageAt);
+  const isManagerFinal = (c.status === "Отказ" || c.status === "Принят на стажировку");
   const d = parseRuDate(c.sentDate);
-  if(!d) return null;
+  if(isManagerFinal && c.stageAt){
+    if(d) return daysBetweenIso(d.toISOString(), c.stageAt);
+    return daysSince(c.stageAt);
+  }
+  if(!d) return c.stageAt ? daysSince(c.stageAt) : null;
   return Math.max(0, Math.floor((Date.now()-d.getTime())/86400000));
 }
 function daysBetweenIso(isoA, isoB){
@@ -1088,6 +1291,18 @@ function isManagerOverdue(c){
   const days = daysInStage(c);
   return days !== null && days >= OVERDUE_MANAGER_DAYS;
 }
+function managerRowColorClass(c){
+  const days = daysInStage(c);
+  const isPending = (c.status === "На рассмотрении у руководителя" || c.status === "Отправлен руководителю" || !c.status);
+  const isInterviewing = (c.status === "Приглашён на собеседование");
+  if(isPending){
+    return (days !== null && days >= OVERDUE_MANAGER_DAYS) ? 'row-overdue-dark' : '';
+  }
+  if(isInterviewing){
+    return (days !== null && days >= OVERDUE_MANAGER_DAYS) ? 'row-overdue' : 'row-interviewing';
+  }
+  return '';
+}
 function isProbationEndingSoon(c){
   if(!c.onboarded || !c.probationEndDate) return false;
   if(c.probationResult && c.probationResult !== "На испытательном сроке") return false;
@@ -1096,9 +1311,10 @@ function isProbationEndingSoon(c){
   const daysLeft = Math.round((end - Date.now())/86400000);
   return daysLeft <= PROBATION_REMINDER_DAYS && daysLeft >= 0;
 }
-function roleLabel(){
+function roleLabel(r){
   const map = {hr:"HR Director", hr_recruiting:"HR по подбору", hr_onboarding:"HR по оформлению", dept_head:"Руководитель отдела"};
-  return map[role] || role;
+  const val = r || role;
+  return map[val] || val;
 }
 function logHistory(rec, text){
   if(!Array.isArray(rec.history)) rec.history = [];
@@ -1117,6 +1333,14 @@ function openManagerCommentEditor(candId){
   editingManagerCommentId = candId;
   document.getElementById('mc_text').value = rec.managerComment || '';
   document.getElementById('overlayManagerComment').classList.add('active');
+}
+let editingHrRejectId = null;
+function openHrRejectEditor(candId){
+  const rec = state.candidates.find(c=>c.id===candId);
+  if(!rec) return;
+  editingHrRejectId = candId;
+  document.getElementById('hr_reject_text').value = '';
+  document.getElementById('overlayHrReject').classList.add('active');
 }
 let editingSchedIdx = null;
 function openSchedCommentEditor(idx){
@@ -1236,6 +1460,34 @@ function showToast(message, type){
   }, 2600);
 }
 
+function showChoiceModal(title, options, current){
+  return new Promise(resolve=>{
+    const ov = document.getElementById('overlayChoice');
+    document.getElementById('choiceTitle').textContent = title;
+    const listEl = document.getElementById('choiceOptionsList');
+    listEl.innerHTML = options.map((o,i)=>
+      `<button type="button" class="btn ${o===current ? 'btn-primary' : 'btn-ghost'}" data-choice-idx="${i}" style="width:100%;justify-content:flex-start;text-align:left;">${o}${o===current ? ' (текущий)' : ''}</button>`
+    ).join('');
+    ov.classList.add('active');
+    const cancelBtn = document.getElementById('choiceCancel');
+    function cleanup(result){
+      ov.classList.remove('active');
+      listEl.querySelectorAll('[data-choice-idx]').forEach(b=> b.removeEventListener('click', onPick));
+      cancelBtn.removeEventListener('click', onCancel);
+      ov.removeEventListener('click', onBgClick);
+      resolve(result);
+    }
+    function onPick(e){
+      const i = parseInt(e.currentTarget.dataset.choiceIdx, 10);
+      cleanup(options[i]);
+    }
+    function onCancel(){ cleanup(undefined); }
+    function onBgClick(e){ if(e.target === ov) cleanup(undefined); }
+    listEl.querySelectorAll('[data-choice-idx]').forEach(b=> b.addEventListener('click', onPick));
+    cancelBtn.addEventListener('click', onCancel);
+    ov.addEventListener('click', onBgClick);
+  });
+}
 function showConfirm(message){
   return new Promise(resolve=>{
     const ov = document.getElementById('overlayConfirm');
@@ -1292,16 +1544,20 @@ async function recoverLocalBackup(key, applyFn){
 }
 
 async function loadState(){
-  const [r, c, s, cb] = await Promise.all([
+  const [r, c, s, cb, rv, al] = await Promise.all([
     loadWithRetry('requests').catch(()=>null),
     loadWithRetry('candidates').catch(()=>null),
     loadWithRetry('schedule').catch(()=>null),
     loadWithRetry('callboard').catch(()=>null),
+    loadWithRetry('reserve').catch(()=>null),
+    loadWithRetry('auto_leads').catch(()=>null),
   ]);
   state.requests = r ? JSON.parse(r.value) : null;
   state.candidates = c ? JSON.parse(c.value) : null;
   state.schedule = s ? JSON.parse(s.value) : {};
   state.callboard = cb ? JSON.parse(cb.value) : [];
+  state.reserve = rv ? JSON.parse(rv.value) : [];
+  state.autoLeads = al ? JSON.parse(al.value) : [];
   await loadTeamFromDB();
 
   await Promise.all([
@@ -1309,15 +1565,29 @@ async function loadState(){
     recoverLocalBackup('candidates', v=>{ state.candidates = v; }),
     recoverLocalBackup('schedule', v=>{ state.schedule = v; }),
     recoverLocalBackup('callboard', v=>{ state.callboard = v; }),
+    recoverLocalBackup('reserve', v=>{ state.reserve = v; }),
   ]);
 
+  // Новая компания без данных — начинаем с чистого листа (без демо-заполнения)
   if(!state.requests){
-    state.requests = seedRequests();
+    state.requests = [];
     await saveRequests();
   }
   if(!state.candidates){
-    state.candidates = seedCandidates();
+    state.candidates = [];
     await saveCandidates();
+  }
+  if(!state.reserve){
+    state.reserve = [];
+    await saveReserve();
+  }
+  if(!state.callboard){
+    state.callboard = [];
+    await saveCallboard();
+  }
+  if(!state.schedule){
+    state.schedule = {};
+    await saveSchedule();
   }
 
   let migrated = false;
@@ -1329,6 +1599,18 @@ async function loadState(){
     }
   });
   if(migrated) await saveCandidates();
+
+  let reqMigrated = false;
+  state.requests.forEach(r=>{
+    if(r.headcount === undefined){ r.headcount = 1; reqMigrated = true; }
+    const hiredCount = state.candidates.filter(c=>c.requestId===r.id && c.onboarded).length;
+    if(r.hiredCount !== hiredCount){ r.hiredCount = hiredCount; reqMigrated = true; }
+    const shouldBeClosed = hiredCount >= (r.headcount || 1);
+    if(!!r.closed !== shouldBeClosed){ r.closed = shouldBeClosed; reqMigrated = true; }
+    if(r.manuallyClosed === undefined){ r.manuallyClosed = false; reqMigrated = true; }
+    if(isRequestClosed(r) && r.closedBy === undefined){ r.closedBy = r.recruiter || ''; reqMigrated = true; }
+  });
+  if(reqMigrated) await saveRequests();
 
   let cbMigrated = false;
   state.callboard.forEach(card=>{
@@ -1385,9 +1667,15 @@ async function saveCandidates(){
 async function saveSchedule(){
   await saveWithRetry('schedule', JSON.stringify(state.schedule));
 }
+async function saveReserve(){
+  await saveWithRetry('reserve', JSON.stringify(state.reserve));
+}
 async function saveCallboard(){
   const ok = await saveWithRetry('callboard', JSON.stringify(state.callboard));
   if(!ok) showToast('Не удалось сохранить обзвон', 'warn');
+}
+async function saveAutoLeads(){
+  await saveWithRetry('auto_leads', JSON.stringify(state.autoLeads || []));
 }
 async function loadTeamFromDB(){
   try{
@@ -1428,6 +1716,20 @@ async function updateTeamMember(id, {name, email, role}){
     return false;
   }
 }
+async function resetTeamMemberPassword(id, newPassword){
+  try{
+    const { data, error } = await sb.functions.invoke('admin-reset-password', {
+      body: { targetTeamMemberId: id, newPassword }
+    });
+    if(error) throw error;
+    if(data && data.error) throw new Error(data.error);
+    return true;
+  }catch(e){
+    console.error('resetTeamMemberPassword failed', e);
+    showToast('Не удалось сменить пароль: ' + (e.message || 'ошибка сервера'), 'warn');
+    return false;
+  }
+}
 async function deleteTeamMember(id){
   try{
     const { error } = await sb.from('team_members').delete().eq('id', id);
@@ -1439,25 +1741,14 @@ async function deleteTeamMember(id){
   }
 }
 
-function seedRequests(){
-  return [
-    {id:uid(), num:1, date:"08.07.2026", branch:"Befit One", manager:"Каримов А.А.", position:"Тренер ТЗ", reason:"Расширение штата", requirements:"Опыт от 2 лет, сертификат ISSA/ACE", status:"Начать поиск", priority:"Горящая", recruiter:"Диера HR", vacancyStatus:"Поиск идёт"},
-    {id:uid(), num:2, date:"08.07.2026", branch:"Befit Pro", manager:"Ниязова Д.К.", position:"Администратор", reason:"Замена сотрудника", requirements:"Грамотная речь, опыт работы с CRM", status:"", priority:"", recruiter:"", vacancyStatus:""},
-    {id:uid(), num:3, date:"07.07.2026", branch:"Befit Sky", manager:"Рустамов Б.", position:"Тренер ГП", reason:"Расширение штата", requirements:"Сертификация по направлению, опыт от 1 года", status:"", priority:"", recruiter:"", vacancyStatus:""},
-  ];
-}
-function seedCandidates(){
-  const reqs = state.requests && state.requests.length ? state.requests : seedRequests();
-  const first = reqs[0];
-  return [
-    {id:uid(), num:1, requestId:first.id, name:"Ахмедов Тимур", phone:"+998 90 123 45 67", sentDate:"09.07.2026", status:"На рассмотрении у руководителя", rejectReason:"", onboarding:"", archived:false, onboarded:false, resumeName:"", resumeData:""},
-    {id:uid(), num:2, requestId:first.id, name:"Юсупова Камила", phone:"+998 90 234 56 78", sentDate:"09.07.2026", status:"Отказ", rejectReason:"Не подходит по сменности", onboarding:"", archived:true, onboarded:false, resumeName:"", resumeData:""},
-    {id:uid(), num:3, requestId:first.id, name:"Собиров Жасур", phone:"+998 90 345 67 89", sentDate:"08.07.2026", status:"Принят на стажировку", rejectReason:"", onboarding:"На этапе стажировки", archived:false, onboarded:false, resumeName:"", resumeData:""},
-  ];
-}
-
 function reqById(id){ return state.requests.find(r=>r.id===id); }
 function nextNum(arr){ return arr.length ? Math.max(...arr.map(r=>r.num))+1 : 1; }
+function recruiterTeamNames(){
+  const names = state.team.filter(u=>u.role==='hr_recruiting').map(u=>u.name);
+  const hrDirectors = state.team.filter(u=>u.role==='hr').map(u=>u.name);
+  hrDirectors.forEach(n=>{ if(!names.includes(n)) names.push(n); });
+  return names.sort((a,b)=>a.localeCompare(b,'ru'));
+}
 
 function optionsHtml(list, selected, allowEmpty){
   let html = allowEmpty ? `<option value="">—</option>` : "";
@@ -1474,12 +1765,45 @@ function rowTimeHtml(field, value){
     <svg class="chev" width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>`;
 }
+function onboardingManagerNames(){
+  return state.team.filter(u=>u.role==='hr_onboarding').map(u=>u.name);
+}
+function onboardingManagerBtnHtml(c){
+  const names = onboardingManagerNames();
+  if(names.length <= 1) return '';
+  const assigned = c.onboardingManager || '';
+  const titleText = assigned ? ('Видит: ' + assigned) : 'Выбрать менеджера по оформлению';
+  const iconText = assigned ? '1' : '+';
+  return `<button type="button" class="icon-btn" data-assign-onboard-mgr="${c.id}" title="${titleText}">${iconText}</button>`;
+}
 function rowDateHtml(field, isoValue, placeholder){
   const label = isoValue ? isoToRu(isoValue) : (placeholder || 'Выберите дату');
   return `<button type="button" class="mac-select-btn light row-date-btn" data-field="${field}" data-value="${isoValue||''}">
     <span class="rd-label">${label}</span>
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.6"/><path d="M3 9.5H21" stroke="currentColor" stroke-width="1.6"/><path d="M8 3V6.5M16 3V6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
   </button>`;
+}
+function unsavedDotHtml(title){
+  return `<span class="unsaved-dot" title="${title || 'Есть несохранённые изменения — нажмите «Сохранить»'}"></span>`;
+}
+function markRowDirty(tr){
+  if(!tr) return;
+  const dot = tr.querySelector('.unsaved-dot');
+  if(dot) dot.style.display = 'inline-block';
+}
+function clearRowDirty(tr){
+  if(!tr) return;
+  const dot = tr.querySelector('.unsaved-dot');
+  if(dot) dot.style.display = 'none';
+}
+function attachDirtyTracking(tbody){
+  if(!tbody || tbody.dataset.dirtyTrackingBound) return;
+  tbody.dataset.dirtyTrackingBound = '1';
+  tbody.addEventListener('input', (e)=>{
+    if(e.target.matches('input.inline')) markRowDirty(e.target.closest('tr'));
+  });
+  tbody.addEventListener('rowselectchange', (e)=> markRowDirty(e.target.closest('tr')));
+  tbody.addEventListener('rowdatechange', (e)=> markRowDirty(e.target.closest('tr')));
 }
 function rowSelectHtml(field, options, selected, allowEmpty){
   let normalized = normalizeSelectOpts(options);
@@ -1508,8 +1832,8 @@ function statusPill(s){
     "Отправлен руководителю":"pill-blue","На рассмотрении у руководителя":"pill-blue","Приглашён на собеседование":"pill-med","Принят на стажировку":"pill-low","Отказ":"pill-hot","Резерв":"pill-gray",
     "Поиск идёт":"pill-blue","Приостановлена":"pill-med","Закрыта":"pill-gray"
   };
-  const displayLabel = s === "Новая" ? "На рассмотрении HR Director" : s === "Принят на стажировку" ? "Руководитель принял кандидата на стажировку" : (s || '—');
-  return `<span class="pill ${map[s]||'pill-gray'}">${displayLabel}</span>`;
+  const displayLabel = (s === "Новая" || !s) ? "На рассмотрении у HR-директора" : s === "Принят на стажировку" ? "Руководитель принял кандидата на стажировку" : (s || '—');
+  return `<span class="pill ${map[s] || (!s ? 'pill-blue' : 'pill-gray')}">${displayLabel}</span>`;
 }
 function onboardingPill(s){
   if(!s) return `<span class="pill pill-gray">—</span>`;
@@ -1539,11 +1863,11 @@ function canEditApproval(){ return role==="hr"; }
 function canAddRequest(){ return role==="dept_head" || role==="hr"; }
 function canAddCandidate(){ return role==="hr_recruiting" || role==="hr"; }
 function canEditStatus(){ return false; }
-function canEditOnboarding(){ return role==="hr_onboarding"; }
-function canEditComment(){ return role==="dept_head" || role==="hr_onboarding"; }
+function canEditOnboarding(){ return role==="hr_onboarding" || (role==="hr" && candSubTab==="hr"); }
+function canEditComment(){ return role==="dept_head" || role==="hr_onboarding" || (role==="hr" && candSubTab==="hr"); }
 function canDeleteRequest(){ return role==="hr"; }
 function canDeleteCandidate(){ return role==="hr" || role==="hr_recruiting"; }
-function canEditCallboard(){ return role==="hr_recruiting"; }
+function canEditCallboard(){ return role==="hr_recruiting" || role==="hr"; }
 function canEditSchedule(){ return role!=="hr"; }
 function canSeeCallboardTab(){ return role==="hr" || role==="hr_recruiting"; }
 
@@ -1557,24 +1881,82 @@ function candidateColumnConfig(){
   return configs[role] || configs.hr;
 }
 
-function requestVisible(r){
-  if(role === 'hr') return true;
-  if(role === 'dept_head') return true;
-  if(role === 'hr_onboarding') return true;
-  if(role === 'hr_recruiting') return r.status === "Начать поиск";
+let reqRecruiterFilter = '';
+let candRecruiterFilter = '';
+let candSubTab = 'recruit';
+let candOnboardMgrFilter = '';
+let reqSubTab = 'open';
+function recalcRequestFulfillment(requestId){
+  if(!requestId) return;
+  const req = reqById(requestId);
+  if(!req) return;
+  const hiredCount = state.candidates.filter(c=>c.requestId===requestId && c.onboarded).length;
+  req.hiredCount = hiredCount;
+  const headcount = req.headcount || 1;
+  const wasClosed = !!req.closed;
+  req.closed = hiredCount >= headcount;
+  if(req.closed && !wasClosed){
+    req.closedBy = req.recruiter || (currentUser && currentUser.name) || '';
+    req.closedAt = nowISO();
+  } else if(!req.closed){
+    req.closedBy = '';
+    req.closedAt = '';
+  }
+}
+function requestBaseVisible(r){
+  if(role === 'hr'){
+    if(reqRecruiterFilter) return r.recruiter === reqRecruiterFilter;
+    return true;
+  }
+  if(role === 'dept_head') return currentUser && r.manager === currentUser.name;
+  if(role === 'hr_onboarding') return r.status === "Начать поиск" && !!r.recruiter;
+  if(role === 'hr_recruiting') return currentUser && r.recruiter === currentUser.name;
   return false;
+}
+function isRequestClosed(r){
+  return !!r.closed || (r.status === "Не одобрено" && !!r.manuallyClosed);
+}
+function requestVisible(r){
+  if(!requestBaseVisible(r)) return false;
+  const closed = isRequestClosed(r);
+  return reqSubTab === 'closed' ? closed : !closed;
 }
 function renderRequests(){
   if(typeof closeRowSelectMenu === 'function') closeRowSelectMenu();
+  const lastColHead = document.getElementById('reqLastColHead');
+  if(lastColHead) lastColHead.textContent = (reqSubTab === 'closed') ? 'Кто закрыл' : '';
   const tbody = document.getElementById('requestsBody');
   const visibleRequests = state.requests.filter(requestVisible);
   if(!visibleRequests.length){
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="11">${role==='hr' ? 'Заявок пока нет — нажмите «Новая заявка», чтобы добавить первую.' : 'Пока нет одобренных заявок.'}</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="12">${reqSubTab==='closed' ? 'Закрытых заявок пока нет.' : (role==='hr' ? 'Заявок пока нет — нажмите «Новая заявка», чтобы добавить первую.' : 'Пока нет одобренных заявок.')}</td></tr>`;
     return;
   }
   const editable = canEditApproval();
   const deletable = canDeleteRequest();
+  const validRecruiterNames = recruiterTeamNames();
+  const canCloseReq = (role === 'dept_head');
+  const isClosedView = (reqSubTab === 'closed');
   tbody.innerHTML = visibleRequests.map(r=>{
+    const recruiterSelected = validRecruiterNames.includes(r.recruiter) ? r.recruiter : '';
+    const headcount = r.headcount || 1;
+    const hiredCount = r.hiredCount || 0;
+    if(isClosedView){
+      return `<tr data-id="${r.id}">
+        <td class="mono">${r.num}</td>
+        <td class="mono">${r.date}</td>
+        <td>${r.branch}</td>
+        <td>${r.manager}</td>
+        <td><strong>${r.position}</strong></td>
+        <td>${r.reason}</td>
+        <td style="max-width:220px;white-space:normal;color:var(--ink-soft);">${r.requirements || '—'}</td>
+        <td class="col-status-closed">${statusPill(r.status)}</td>
+        <td class="col-priority">${priorityPill(r.priority)}</td>
+        <td class="col-recruiter">${r.recruiter || '—'}</td>
+        <td class="mono col-hired-closed" style="white-space:nowrap;">${hiredCount} из ${headcount}</td>
+        <td>${r.closedBy || '—'}</td>
+      </tr>`;
+    }
+    const showCloseBtn = canCloseReq && r.status === "Не одобрено" && !isRequestClosed(r);
     return `<tr data-id="${r.id}">
       <td class="mono">${r.num}</td>
       <td class="mono">${r.date}</td>
@@ -1589,15 +1971,18 @@ function renderRequests(){
       <td class="col-priority">${editable
           ? rowSelectHtml('priority', PRIORITY_OPTS, r.priority, true)
           : priorityPill(r.priority)}</td>
-      <td>${editable
-          ? `<input class="inline" data-field="recruiter" value="${(r.recruiter||'').replace(/"/g,'&quot;')}" placeholder="ФИО рекрутера">`
+      <td class="col-recruiter">${editable
+          ? rowSelectHtml('recruiter', validRecruiterNames, recruiterSelected, true)
           : (r.recruiter || '—')}</td>
+      <td class="mono" style="white-space:nowrap;">${hiredCount} из ${headcount}</td>
       <td style="white-space:nowrap;">
-        ${editable ? `<button class="btn btn-primary btn-sm" data-save-req="${r.id}">Сохранить</button>` : ''}
+        ${editable ? `${unsavedDotHtml()}<button class="btn btn-primary btn-sm" data-save-req="${r.id}">Сохранить</button>` : ''}
         ${deletable ? `<button class="icon-btn" data-del-req="${r.id}" title="Удалить">✕</button>` : ''}
+        ${showCloseBtn ? `<button class="btn btn-ghost btn-sm" data-close-req="${r.id}">Закрыть</button>` : ''}
       </td>
     </tr>`;
   }).join('');
+  attachDirtyTracking(tbody);
 
   tbody.querySelectorAll('[data-save-req]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
@@ -1607,7 +1992,7 @@ function renderRequests(){
       if(!rec) return;
       rec.status = tr.querySelector('[data-field="status"] .row-select-btn').dataset.value;
       rec.priority = tr.querySelector('[data-field="priority"] .row-select-btn').dataset.value;
-      rec.recruiter = tr.querySelector('[data-field="recruiter"]').value;
+      rec.recruiter = tr.querySelector('[data-field="recruiter"] .row-select-btn').dataset.value;
       if(rec.status === "Начать поиск"){
         if(!rec.vacancyStatus || rec.vacancyStatus === "") rec.vacancyStatus = "Поиск идёт";
         if(!rec.approvedAt) rec.approvedAt = nowISO();
@@ -1631,8 +2016,23 @@ function renderRequests(){
       showToast('Заявка удалена');
     });
   });
+  tbody.querySelectorAll('[data-close-req]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const rec = reqById(btn.dataset.closeReq);
+      if(!rec) return;
+      rec.manuallyClosed = true;
+      rec.closedBy = (currentUser && currentUser.name) || '';
+      rec.closedAt = nowISO();
+      await saveRequests();
+      renderRequests();
+      showToast('Заявка перенесена в Закрытые');
+    });
+  });
   const showPriority = (role === 'hr' || role === 'hr_recruiting');
   document.querySelectorAll('.col-priority').forEach(el=>{ el.style.display = showPriority ? '' : 'none'; });
+  document.querySelectorAll('.col-recruiter').forEach(el=>{ el.style.display = isClosedView ? 'none' : ''; });
+  document.querySelectorAll('.col-status-closed').forEach(el=>{ el.style.display = isClosedView ? 'none' : ''; });
+  document.querySelectorAll('.col-hired-closed').forEach(el=>{ el.style.display = isClosedView ? 'none' : ''; });
   tbody.querySelectorAll('[data-req-comment]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const rec = reqById(btn.dataset.reqComment);
@@ -1640,11 +2040,13 @@ function renderRequests(){
       showCommentModal(`Комментарий — заявка №${rec.num} (${rec.position})`, rec.requirements);
     });
   });
+  refreshStickyHScroll();
 }
 
 function renderCandidates(){
   if(role === 'dept_head'){ renderCandidatesManagerView(); return; }
   if(role === 'hr_onboarding'){ renderCandidatesOnboardingView(); return; }
+  if(role === 'hr' && candSubTab === 'hr'){ renderCandidatesOnboardingView(true); return; }
 
   const thead = document.getElementById('candidatesHead');
   const tbody = document.getElementById('candidatesBody');
@@ -1653,6 +2055,20 @@ function renderCandidates(){
   if(role === 'hr' || role === 'hr_recruiting'){
     list = list.filter(c=> c.status !== "Принят на стажировку" && c.status !== "Отказ");
   }
+  if(role === 'hr_recruiting' && currentUser){
+    list = list.filter(c=>{
+      if(c.recruiter) return c.recruiter === currentUser.name;
+      const req = reqById(c.requestId);
+      return req && req.recruiter === currentUser.name;
+    });
+  }
+  if(role === 'hr' && candRecruiterFilter){
+    list = list.filter(c=>{
+      if(c.recruiter) return c.recruiter === candRecruiterFilter;
+      const req = reqById(c.requestId);
+      return req && req.recruiter === candRecruiterFilter;
+    });
+  }
 
   let headHtml = '<tr>';
   if(cfg.num) headHtml += '<th>№</th>';
@@ -1660,10 +2076,12 @@ function renderCandidates(){
   if(cfg.sent) headHtml += '<th>Отправлен</th>';
   headHtml += '<th>Статус</th><th>Дней на этапе</th>';
   if(cfg.onboarding) headHtml += '<th>Этапы</th>';
-  headHtml += '<th>Комментарий HR</th><th></th></tr>';
+  headHtml += '<th>Комментарий HR</th>';
+  if(role === 'hr_recruiting') headHtml += '<th>Отказ</th>';
+  headHtml += '<th></th></tr>';
   thead.innerHTML = headHtml;
 
-  const colCount = 7 + (cfg.num?1:0) + (cfg.sent?1:0) + (cfg.onboarding?1:0) + 2;
+  const colCount = 7 + (cfg.num?1:0) + (cfg.sent?1:0) + (cfg.onboarding?1:0) + (role==='hr_recruiting'?1:0) + 2;
   if(!list.length){
     tbody.innerHTML = `<tr class="empty-row"><td colspan="${colCount}">Кандидатов пока нет.</td></tr>`;
     return;
@@ -1695,6 +2113,9 @@ function renderCandidates(){
           : onboardingPill(c.onboarding)}</td>`;
     }
     row += `<td>${c.rejectReason ? `<button class="comment-pill" data-comment="${c.id}" title="Открыть комментарий">💬 Открыть</button>` : '<span class="no-resume">—</span>'}</td>`;
+    if(role === 'hr_recruiting'){
+      row += `<td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" data-hr-reject="${c.id}" title="Кандидат сам отказался">Отказ</button></td>`;
+    }
     row += `<td style="white-space:nowrap;">${deletable ? `<button class="icon-btn" data-del-cand="${c.id}" title="Удалить">✕</button>` : ''} <button class="icon-btn" data-history="${c.id}" title="История">🕒</button></td>`;
     row += `</tr>`;
     return row;
@@ -1711,6 +2132,9 @@ function renderCandidates(){
       await saveCandidates();
       renderCandidates(); renderDashboard();
     });
+  });
+  tbody.querySelectorAll('[data-hr-reject]').forEach(btn=>{
+    btn.addEventListener('click', ()=> openHrRejectEditor(btn.dataset.hrReject));
   });
   tbody.querySelectorAll('[data-del-cand]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
@@ -1732,6 +2156,7 @@ function renderCandidates(){
       showCommentModal('Комментарий HR — ' + rec.name, rec.rejectReason);
     });
   });
+  refreshStickyHScroll();
 }
 
 function renderCandidatesManagerView(){
@@ -1746,7 +2171,14 @@ function renderCandidatesManagerView(){
     <th>Комментарий HR</th><th>Дата и время собеседования</th><th>Статус</th><th>Причина отказа</th><th>Дней на этапе</th><th>Комментарий от руководителя</th><th>Дата выхода на стажировку</th><th></th>
   </tr>`;
 
-  const list = state.candidates.filter(c=>!c.archived && c.status !== "Принят на стажировку");
+  const list = state.candidates.filter(c=>{
+    if(c.archived || c.status === "Принят на стажировку") return false;
+    if(role === 'dept_head' && currentUser){
+      const req = reqById(c.requestId);
+      return req && req.manager === currentUser.name;
+    }
+    return true;
+  });
   if(!list.length){
     tbody.innerHTML = `<tr class="empty-row"><td colspan="13">Кандидатов пока нет.</td></tr>`;
     return;
@@ -1755,8 +2187,8 @@ function renderCandidatesManagerView(){
   tbody.innerHTML = list.map(c=>{
     const req = reqById(c.requestId);
     const days = daysInStage(c);
-    return `<tr data-id="${c.id}" class="${isManagerOverdue(c) ? 'row-overdue' : ''}">
-      <td style="white-space:nowrap;min-width:150px;">${req ? `<strong>${req.position}</strong><br><span class="mono" style="color:var(--ink-soft);font-size:11.5px;">${req.branch}</span>` : '<span style="color:var(--ink-soft)">— вакансия удалена —</span>'}</td>
+    return `<tr data-id="${c.id}" class="${managerRowColorClass(c)}">
+      <td style="white-space:nowrap;min-width:150px;">${req ? `<strong>${req.position}</strong><br><span class="mono" style="color:var(--ink-soft);font-size:11.5px;">${req.branch}</span>${req.recruiter ? `<br><span style="color:var(--ink-soft);font-size:10.5px;">${req.recruiter}</span>` : ''}` : '<span style="color:var(--ink-soft)">— вакансия удалена —</span>'}</td>
       <td style="white-space:nowrap;">${req ? req.manager : '—'}</td>
       <td style="white-space:nowrap;"><strong>${c.name}</strong></td>
       <td class="mono" style="white-space:nowrap;">${c.phone||'—'}</td>
@@ -1767,13 +2199,51 @@ function renderCandidatesManagerView(){
       <td style="min-width:190px;">${rowSelectHtml('rejectReasonCode', REJECT_REASON_OPTS, c.rejectReasonCode, true)}</td>
       <td class="mono" style="white-space:nowrap;">${days===null?'—':days+' дн.'}</td>
       <td>${c.managerComment ? `<button class="comment-pill" data-edit-mgr="${c.id}" title="Открыть комментарий">💬 Открыть</button>` : `<button class="comment-pill add" data-edit-mgr="${c.id}" title="Добавить комментарий">✏️ Добавить</button>`}</td>
-      <td style="white-space:nowrap;">${rowDateHtml('internshipDate', c.internshipDate)}</td>
-      <td style="white-space:nowrap;"><button class="btn btn-primary btn-sm" data-save-cand="${c.id}">Сохранить</button> <button class="icon-btn" data-history="${c.id}" title="История">🕒</button></td>
+      <td style="white-space:nowrap;"><div style="display:flex;gap:6px;align-items:center;">${rowDateHtml('internshipDate', c.internshipDate)}<input class="inline" data-field="internshipTime" value="${(c.internshipTime||'').replace(/"/g,'&quot;')}" placeholder="00:00" style="font-weight:600;min-width:90px;">${onboardingManagerBtnHtml(c)}</div></td>
+      <td style="white-space:nowrap;">${unsavedDotHtml()}<button class="btn btn-primary btn-sm" data-save-cand="${c.id}">Сохранить</button> <button class="icon-btn" data-history="${c.id}" title="История">🕒</button></td>
     </tr>`;
   }).join('');
+  attachDirtyTracking(tbody);
 
   tbody.querySelectorAll('input.inline[data-field="interviewTime"]').forEach(el=>{
     attachTimeMask(el);
+  });
+  tbody.querySelectorAll('input.inline[data-field="internshipTime"]').forEach(el=>{
+    attachTimeMask(el);
+  });
+  tbody.querySelectorAll('[data-assign-onboard-mgr]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const rec = state.candidates.find(x=>x.id===btn.dataset.assignOnboardMgr);
+      if(!rec) return;
+      const names = onboardingManagerNames();
+      const optionsList = [...names];
+      const choice = await showChoiceModal('Выберите менеджера по оформлению', optionsList, rec.onboardingManager || '');
+      if(choice === undefined) return;
+      // Сохраняем всё, что уже введено в строке, прежде чем перерисовывать таблицу —
+      // иначе выбор менеджера сбросит несохранённые дату/время собеседования, статус и т.п.
+      const tr = btn.closest('tr');
+      if(tr){
+        const interviewDateBtn = tr.querySelector('.row-date-btn[data-field="interviewDate"]');
+        const interviewTimeInput = tr.querySelector('input.inline[data-field="interviewTime"]');
+        if(interviewDateBtn || interviewTimeInput){
+          const datePart = interviewDateBtn ? interviewDateBtn.dataset.value : (rec.interviewAt||'').split('T')[0];
+          const timePart = interviewTimeInput ? interviewTimeInput.value.trim() : ((rec.interviewAt||'').split('T')[1]||'');
+          rec.interviewAt = datePart ? (datePart + 'T' + (timePart || '00:00')) : '';
+        }
+        const statusBtn = tr.querySelector('[data-field="status"] .row-select-btn');
+        if(statusBtn && DEPT_STATUS_CHOICES.some(o=>o.value===statusBtn.dataset.value)) rec.status = statusBtn.dataset.value;
+        const reasonBtn = tr.querySelector('[data-field="rejectReasonCode"] .row-select-btn');
+        if(reasonBtn) rec.rejectReasonCode = reasonBtn.dataset.value || '';
+        const internshipDateBtn = tr.querySelector('.row-date-btn[data-field="internshipDate"]');
+        if(internshipDateBtn) rec.internshipDate = internshipDateBtn.dataset.value || '';
+        const internshipTimeInput = tr.querySelector('input.inline[data-field="internshipTime"]');
+        if(internshipTimeInput) rec.internshipTime = internshipTimeInput.value.trim();
+      }
+      rec.onboardingManager = choice;
+      await saveCandidates();
+      renderCandidates();
+      showToast('Менеджер по оформлению обновлён');
+    });
   });
 
   tbody.querySelectorAll('[data-save-cand]').forEach(btn=>{
@@ -1801,9 +2271,12 @@ function renderCandidatesManagerView(){
       }
       rec.rejectReasonCode = (rec.status === "Отказ") ? chosenReason : "";
       rec.internshipDate = tr.querySelector('.row-date-btn[data-field="internshipDate"]').dataset.value;
+      const internshipTimeEl = tr.querySelector('input.inline[data-field="internshipTime"]');
+      if(internshipTimeEl) rec.internshipTime = internshipTimeEl.value.trim();
       rec.archived = (rec.status === "Отказ");
       if(oldStatus !== rec.status){
-        rec.stageAt = nowISO();
+        const isFinalTransition = (rec.status === "Отказ" || rec.status === "Принят на стажировку");
+        if(isFinalTransition) rec.stageAt = nowISO();
         logHistory(rec, `Статус изменён: «${oldStatus||'—'}» → «${rec.status||'—'}»${rec.status==="Отказ" && chosenReason ? ` (причина: ${chosenReason})` : ''}`);
       }
       await saveCandidates();
@@ -1826,7 +2299,7 @@ function renderCandidatesManagerView(){
   });
 }
 
-function renderCandidatesOnboardingView(){
+function renderCandidatesOnboardingView(asHrOverview){
   if(typeof closeRowSelectMenu === 'function') closeRowSelectMenu();
   if(typeof closeRowDateMenu === 'function') closeRowDateMenu();
   const thead = document.getElementById('candidatesHead');
@@ -1837,7 +2310,14 @@ function renderCandidatesOnboardingView(){
     <th>Дата выхода на стажировку</th><th>Статус</th><th>Дней на этапе</th><th>Этапы</th><th>Документы</th><th>Комментарий HR</th><th>Комментарий от руководителя</th><th></th>
   </tr>`;
 
-  const list = state.candidates.filter(c=>!c.archived && !c.onboarded && c.status === "Принят на стажировку");
+  let list = state.candidates.filter(c=>!c.archived && !c.onboarded && c.status === "Принят на стажировку");
+  if(asHrOverview){
+    if(candOnboardMgrFilter){
+      list = list.filter(c=> c.onboardingManager === candOnboardMgrFilter);
+    }
+  } else if(currentUser && currentUser.name && onboardingManagerNames().length > 1){
+    list = list.filter(c=> !c.onboardingManager || c.onboardingManager === currentUser.name);
+  }
   if(!list.length){
     tbody.innerHTML = `<tr class="empty-row"><td colspan="13">Пока нет кандидатов, принятых на стажировку.</td></tr>`;
     return;
@@ -1859,9 +2339,10 @@ function renderCandidatesOnboardingView(){
       <td>${docsAllowed(c.onboarding) ? `<button class="btn btn-ghost btn-sm docs-btn" data-open-docs="${c.id}">Документы</button>` : '<span class="no-resume">—</span>'}</td>
       <td>${c.rejectReason ? `<button class="comment-pill" data-comment="${c.id}" title="Открыть комментарий">💬 Открыть</button>` : '<span class="no-resume">—</span>'}</td>
       <td>${c.managerComment ? `<button class="comment-pill" data-mgr-comment="${c.id}" title="Открыть комментарий">💬 Открыть</button>` : '<span class="no-resume">—</span>'}</td>
-      <td style="white-space:nowrap;"><button class="btn btn-primary btn-sm" data-save-cand="${c.id}">Сохранить</button> <button class="icon-btn" data-history="${c.id}" title="История">🕒</button></td>
+      <td style="white-space:nowrap;">${unsavedDotHtml()}<button class="btn btn-primary btn-sm" data-save-cand="${c.id}">Сохранить</button> <button class="icon-btn" data-history="${c.id}" title="История">🕒</button></td>
     </tr>`;
   }).join('');
+  attachDirtyTracking(tbody);
 
   tbody.querySelectorAll('[data-open-docs]').forEach(btn=>{
     btn.addEventListener('click', ()=> openDocsModal(btn.dataset.openDocs));
@@ -1890,8 +2371,9 @@ function renderCandidatesOnboardingView(){
         rec.stageAt = nowISO();
         logHistory(rec, `Этап оформления изменён: «${oldStage||'—'}» → «${rec.onboarding||'—'}»`);
       }
-      await saveCandidates();
-      renderCandidates(); renderDashboard();
+      recalcRequestFulfillment(rec.requestId);
+      await saveCandidates(); await saveRequests();
+      renderCandidates(); renderDashboard(); renderRequests();
       showToast('Сохранено');
     });
   });
@@ -2001,11 +2483,12 @@ function renderOnboardedList(){
       <td>${c.managerComment ? `<button class="comment-pill" data-mgr-comment="${c.id}" title="Открыть комментарий">💬 Открыть</button>` : '<span class="no-resume">—</span>'}</td>
       <td style="white-space:nowrap;">${canEditProbation ? rowDateHtml('probationEndDate', c.probationEndDate, 'Дата') : (c.probationEndDate ? isoToRu(c.probationEndDate) : '—')}${probationSoon ? `<div class="probation-warn">⚠ Скоро конец срока</div>` : ''}</td>
       <td style="white-space:nowrap;">
-        ${canEditProbation ? `<button class="btn btn-primary btn-sm" data-save-probation="${c.id}">Сохранить</button>` : ''}
+        ${canEditProbation ? `${unsavedDotHtml()}<button class="btn btn-primary btn-sm" data-save-probation="${c.id}">Сохранить</button>` : ''}
         ${canRestore ? `<button class="icon-btn" data-unonboard="${c.id}" title="Вернуть в оформление">↺</button>` : ''}
       </td>
     </tr>`;
   }).join('');
+  attachDirtyTracking(tbody);
   tbody.querySelectorAll('[data-open-docs]').forEach(btn=>{
     btn.addEventListener('click', ()=> openDocsModal(btn.dataset.openDocs));
   });
@@ -2038,9 +2521,13 @@ function renderOnboardedList(){
     btn.addEventListener('click', async ()=>{
       const rec = state.candidates.find(c=>c.id===btn.dataset.unonboard);
       if(!rec) return;
+      const tr = btn.closest('tr');
+      const dateBtn = tr ? tr.querySelector('.row-date-btn[data-field="probationEndDate"]') : null;
+      if(dateBtn) rec.probationEndDate = dateBtn.dataset.value || '';
       rec.onboarded = false;
-      await saveCandidates();
-      renderCandidates(); renderDashboard();
+      recalcRequestFulfillment(rec.requestId);
+      await saveCandidates(); await saveRequests();
+      renderCandidates(); renderDashboard(); renderRequests();
     });
   });
 }
@@ -2120,7 +2607,7 @@ function renderRecruiterStats(cands){
   title.style.display = '';
   card.style.display = '';
 
-  const rows = RECRUITER_OPTS.map(name=>{
+  const rows = recruiterTeamNames().map(name=>{
     const own = cands.filter(c=>{
       const req = reqById(c.requestId);
       return req && req.recruiter === name;
@@ -2181,8 +2668,11 @@ function renderWeeklyReport(){
     return !isNaN(d.getTime()) && d>=weekStart && d<=weekEnd;
   });
   const internsWeek = state.candidates.filter(c=>{
-    if(c.status !== "Принят на стажировку" || !c.internshipDate) return false;
-    const d = new Date(c.internshipDate);
+    if(c.status !== "Принят на стажировку" || c.archived || c.onboarded) return false;
+    if(c.onboarding && c.onboarding !== "На этапе стажировки") return false;
+    const dateStr = c.internshipDate || (c.stageAt ? c.stageAt.slice(0,10) : '');
+    if(!dateStr) return false;
+    const d = new Date(dateStr);
     return !isNaN(d.getTime()) && d>=weekStart && d<=weekEnd;
   });
   const cards = [
@@ -2194,18 +2684,34 @@ function renderWeeklyReport(){
   grid.innerHTML = cards.map(([cls,num,lbl])=>`
     <div class="kpi ${cls}"><div class="num">${num}</div><div class="lbl">${lbl}</div></div>
   `).join('') + `
-    <div class="kpi kpi-wide">
+    <div class="kpi kpi-wide" style="cursor:default;">
       <div class="lbl" style="margin-bottom:10px;">Новые стажёры за неделю</div>
-      ${internsWeek.length ? `<div class="intern-week-list">${internsWeek.map(c=>{
+      ${internsWeek.length ? `<div class="table-wrap"><table class="intern-week-table">
+        <thead><tr><th>Должность</th><th>Филиал</th><th>ФИО</th><th>Телефон</th><th>Резюме</th><th>Дата и время</th></tr></thead>
+        <tbody>${internsWeek.map(c=>{
         const req = reqById(c.requestId);
-        return `<div class="intern-week-row">
-          <span class="intern-week-name">${c.name}</span>
-          <span class="intern-week-pos">${req ? req.position : '—'}</span>
-          <span class="intern-week-date mono">${isoToRu(c.internshipDate)}</span>
-        </div>`;
-      }).join('')}</div>` : `<div style="color:var(--ink-soft);font-size:13px;">На этой неделе новых стажёров нет.</div>`}
+        const dateStr = c.internshipDate || (c.stageAt ? c.stageAt.slice(0,10) : '');
+        const timeStr = c.internshipTime || '';
+        const resumeHtml = c.resumeData
+          ? `<a class="resume-link" href="${c.resumeData}" target="_blank" rel="noopener">Резюме</a>`
+          : '<span class="no-resume">—</span>';
+        return `<tr>
+          <td>${req ? req.position : '—'}</td>
+          <td>${req ? req.branch : '—'}</td>
+          <td><strong>${c.name}</strong></td>
+          <td>${c.phone ? `<button type="button" class="phone-reveal-btn" data-phone-reveal="${c.phone}">Показать номер</button>` : '—'}</td>
+          <td>${resumeHtml}</td>
+          <td class="mono" style="white-space:nowrap;">${dateStr ? isoToRu(dateStr) : '—'}${timeStr ? ' · '+timeStr : ''}</td>
+        </tr>`;
+      }).join('')}</tbody>
+      </table></div>` : `<div style="color:var(--ink-soft);font-size:13px;">На этой неделе новых стажёров нет.</div>`}
     </div>
   `;
+  grid.querySelectorAll('[data-phone-reveal]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btn.outerHTML = `<span class="mono" style="font-size:12.5px;">${btn.dataset.phoneReveal}</span>`;
+    });
+  });
 }
 
 function renderFunnel(reqs, cands){
@@ -2312,6 +2818,7 @@ function renderSchedule(){
     });
   });
   applyScheduleRecruiterFilter();
+  refreshStickyHScroll();
 }
 
 const MONTH_NAMES_RU = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
@@ -2385,6 +2892,22 @@ document.addEventListener('click', (e)=>{
   if(cal && !cal.contains(e.target) && e.target.id!=='schedDateBtn'){ closeMacCalendar(); }
 });
 
+function clampDropdownToViewport(el){
+  el.style.left = '';
+  el.style.right = '';
+  const rect = el.getBoundingClientRect();
+  const margin = 8;
+  if(rect.right > window.innerWidth - margin){
+    el.style.left = 'auto';
+    el.style.right = '0';
+  }
+  const rect2 = el.getBoundingClientRect();
+  if(rect2.left < margin){
+    el.style.left = '0';
+    el.style.right = 'auto';
+  }
+}
+
 function createMacMonthPicker(inputId, btnId, calId){
   let viewYear;
   const input=()=>document.getElementById(inputId), btn=()=>document.getElementById(btnId), cal=()=>document.getElementById(calId);
@@ -2407,6 +2930,9 @@ function createMacMonthPicker(inputId, btnId, calId){
           const isSel = selY==viewYear && (+selM-1)===i;
           return `<div class="mac-month-cell ${isSel?'selected':''}" data-m="${pad2(i+1)}">${m.slice(0,3)}</div>`;
         }).join('')}
+      </div>
+      <div class="mac-cal-foot" style="display:flex;justify-content:flex-end;padding:6px 4px 0;">
+        <button type="button" class="btn btn-ghost btn-sm" data-reset-month style="font-size:11px;padding:4px 10px;">Всё время</button>
       </div>`;
     cal().querySelectorAll('.mac-month-cell').forEach(el=>{
       el.addEventListener('click', ()=>{
@@ -2418,12 +2944,23 @@ function createMacMonthPicker(inputId, btnId, calId){
     });
     cal().querySelector('[data-nav="prev"]').addEventListener('click',(e)=>{ e.stopPropagation(); viewYear--; render(); });
     cal().querySelector('[data-nav="next"]').addEventListener('click',(e)=>{ e.stopPropagation(); viewYear++; render(); });
+    const resetBtn = cal().querySelector('[data-reset-month]');
+    if(resetBtn){
+      resetBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        input().value = '';
+        input().dispatchEvent(new Event('change'));
+        updateBtn();
+        close();
+      });
+    }
   }
   function open(){
     const val = input().value;
     viewYear = val ? +val.split('-')[0] : new Date().getFullYear();
     render();
     cal().classList.add('open');
+    clampDropdownToViewport(cal());
   }
   function close(){ cal().classList.remove('open'); }
   btn().addEventListener('click',(e)=>{ e.stopPropagation(); cal().classList.contains('open')?close():open(); });
@@ -2474,6 +3011,9 @@ function createMacWeekPicker(inputId, btnId, calId){
           const isSelWeek = c.week===selVal;
           return `<div class="mac-cal-day ${isToday?'today':''} ${isSelWeek?'selected':''}" data-week="${c.week}">${c.d}</div>`;
         }).join('')}
+      </div>
+      <div class="mac-cal-foot" style="display:flex;justify-content:flex-end;padding:6px 4px 0;">
+        <button type="button" class="btn btn-ghost btn-sm" data-reset-week style="font-size:11px;padding:4px 10px;">Текущая неделя</button>
       </div>`;
     cal().querySelectorAll('.mac-cal-day[data-week]').forEach(el=>{
       el.addEventListener('click', ()=>{
@@ -2483,6 +3023,16 @@ function createMacWeekPicker(inputId, btnId, calId){
         close();
       });
     });
+    const resetWeekBtn = cal().querySelector('[data-reset-week]');
+    if(resetWeekBtn){
+      resetWeekBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        input().value = '';
+        input().dispatchEvent(new Event('change'));
+        updateBtn();
+        close();
+      });
+    }
     cal().querySelector('[data-nav="prev"]').addEventListener('click',(e)=>{ e.stopPropagation(); viewMonth--; if(viewMonth<0){viewMonth=11;viewYear--;} render(); });
     cal().querySelector('[data-nav="next"]').addEventListener('click',(e)=>{ e.stopPropagation(); viewMonth++; if(viewMonth>11){viewMonth=0;viewYear++;} render(); });
   }
@@ -2491,6 +3041,7 @@ function createMacWeekPicker(inputId, btnId, calId){
     viewYear=now.getFullYear(); viewMonth=now.getMonth();
     render();
     cal().classList.add('open');
+    clampDropdownToViewport(cal());
   }
   function close(){ cal().classList.remove('open'); }
   btn().addEventListener('click',(e)=>{ e.stopPropagation(); cal().classList.contains('open')?close():open(); });
@@ -2531,6 +3082,9 @@ function createMacSimpleDatePicker(inputId, btnId, calId, placeholder){
           const isSel = c.iso === selIso;
           return `<div class="mac-cal-day ${isToday?'today':''} ${isSel?'selected':''}" data-iso="${c.iso}">${c.d}</div>`;
         }).join('')}
+      </div>
+      <div class="mac-cal-foot" style="display:flex;justify-content:flex-end;padding:6px 4px 0;">
+        <button type="button" class="btn btn-ghost btn-sm" data-reset-date style="font-size:11px;padding:4px 10px;">Сброс</button>
       </div>`;
     cal().querySelectorAll('.mac-cal-day[data-iso]').forEach(el=>{
       el.addEventListener('click', ()=>{
@@ -2542,6 +3096,16 @@ function createMacSimpleDatePicker(inputId, btnId, calId, placeholder){
     });
     cal().querySelector('[data-nav="prev"]').addEventListener('click', (e)=>{ e.stopPropagation(); viewMonth--; if(viewMonth<0){viewMonth=11;viewYear--;} render(); });
     cal().querySelector('[data-nav="next"]').addEventListener('click', (e)=>{ e.stopPropagation(); viewMonth++; if(viewMonth>11){viewMonth=0;viewYear++;} render(); });
+    const resetBtn = cal().querySelector('[data-reset-date]');
+    if(resetBtn){
+      resetBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        input().value = '';
+        input().dispatchEvent(new Event('change'));
+        updateBtn();
+        close();
+      });
+    }
   }
   function open(){
     const iso = input().value || new Date().toISOString().slice(0,10);
@@ -2549,6 +3113,7 @@ function createMacSimpleDatePicker(inputId, btnId, calId, placeholder){
     viewYear = d.getFullYear(); viewMonth = d.getMonth();
     render();
     cal().classList.add('open');
+    clampDropdownToViewport(cal());
   }
   function close(){ cal().classList.remove('open'); }
   btn().addEventListener('click', (e)=>{ e.stopPropagation(); cal().classList.contains('open') ? close() : open(); });
@@ -2659,22 +3224,145 @@ function renderAll(){
   try{ renderDashboard(); }catch(e){ console.error('renderDashboard failed', e); }
   try{ renderSchedule(); }catch(e){ console.error('renderSchedule failed', e); }
   try{ renderCallboard(); }catch(e){ console.error('renderCallboard failed', e); }
+  try{ renderAutoResponse(); }catch(e){ console.error('renderAutoResponse failed', e); }
+  try{ renderReserve(); }catch(e){ console.error('renderReserve failed', e); }
   try{ renderPipeline(); }catch(e){ console.error('renderPipeline failed', e); }
   try{ renderNotifications(); }catch(e){ console.error('renderNotifications failed', e); }
+  try{ refreshStickyHScroll(); }catch(e){ console.error('refreshStickyHScroll failed', e); }
 }
 
 function pct(n, d){ return d>0 ? Math.round((n/d)*100) : 0; }
 
 function switchTab(view){
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab[data-view]').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   const tabEl = document.querySelector(`.tab[data-view="${view}"]`);
   if(tabEl) tabEl.classList.add('active');
   const viewEl = document.getElementById('view-'+view);
   if(viewEl) viewEl.classList.add('active');
+  refreshStickyHScroll();
 }
-document.querySelectorAll('.tab').forEach(t=>{
+let stickyHScrollTarget = null;
+let stickyHScrollSyncing = false;
+function refreshStickyHScroll(){
+  requestAnimationFrame(()=>{
+    const bar = document.getElementById('stickyHScroll');
+    const inner = document.getElementById('stickyHScrollInner');
+    if(!bar || !inner) return;
+    const candidateIds = ['reqTableWrap','candTableWrap','schedTableWrap','reserveTableWrap','cbRejectedTableWrap'];
+    let target = null;
+    for(const id of candidateIds){
+      const el = document.getElementById(id);
+      if(el && el.offsetParent !== null){ target = el; break; }
+    }
+    stickyHScrollTarget = target;
+    if(!target){
+      bar.style.display = 'none';
+      return;
+    }
+    const needsScroll = target.scrollWidth > target.clientWidth + 2;
+    if(!needsScroll){
+      bar.style.display = 'none';
+      return;
+    }
+    bar.style.display = '';
+    inner.style.width = target.scrollWidth + 'px';
+    const targetMax = target.scrollWidth - target.clientWidth;
+    const barMax = bar.scrollWidth - bar.clientWidth;
+    const ratio = targetMax > 0 ? (target.scrollLeft / targetMax) : 0;
+    bar.scrollLeft = ratio * barMax;
+  });
+}
+(function initStickyHScroll(){
+  const bar = document.getElementById('stickyHScroll');
+  if(!bar) return;
+  bar.addEventListener('scroll', ()=>{
+    if(stickyHScrollSyncing || !stickyHScrollTarget) return;
+    stickyHScrollSyncing = true;
+    const barMax = bar.scrollWidth - bar.clientWidth;
+    const targetMax = stickyHScrollTarget.scrollWidth - stickyHScrollTarget.clientWidth;
+    const ratio = barMax > 0 ? (bar.scrollLeft / barMax) : 0;
+    stickyHScrollTarget.scrollLeft = ratio * targetMax;
+    stickyHScrollSyncing = false;
+  });
+  document.addEventListener('scroll', (e)=>{
+    const wrap = e.target;
+    if(wrap && wrap.id && ['reqTableWrap','candTableWrap','schedTableWrap','reserveTableWrap','cbRejectedTableWrap'].includes(wrap.id)){
+      if(stickyHScrollSyncing) return;
+      stickyHScrollSyncing = true;
+      const targetMax = wrap.scrollWidth - wrap.clientWidth;
+      const barMax = bar.scrollWidth - bar.clientWidth;
+      const ratio = targetMax > 0 ? (wrap.scrollLeft / targetMax) : 0;
+      bar.scrollLeft = ratio * barMax;
+      stickyHScrollSyncing = false;
+    }
+  }, true);
+  window.addEventListener('resize', refreshStickyHScroll);
+})();
+document.querySelectorAll('.tab[data-view]').forEach(t=>{
   t.addEventListener('click', ()=> switchTab(t.dataset.view));
+});
+
+function switchCbSub(sub){
+  document.querySelectorAll('.tab[data-cbsub]').forEach(x=>x.classList.remove('active'));
+  const tabEl = document.querySelector(`.tab[data-cbsub="${sub}"]`);
+  if(tabEl) tabEl.classList.add('active');
+  const map = { manual: 'cbSubManual', auto: 'cbSubAuto', rejected: 'cbSubRejected' };
+  Object.values(map).forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display = 'none';
+  });
+  const target = document.getElementById(map[sub]);
+  if(target) target.style.display = '';
+  const addBtn = document.getElementById('btnAddCallboard');
+  if(addBtn) addBtn.style.display = (sub === 'manual') ? '' : 'none';
+  if(sub === 'rejected') renderCbRejected();
+  const rejWrap = document.getElementById('cbRejectedTableWrap');
+  if(rejWrap) rejWrap.scrollLeft = 0;
+  const barEl = document.getElementById('stickyHScroll');
+  if(barEl) barEl.scrollLeft = 0;
+  refreshStickyHScroll();
+}
+document.querySelectorAll('.tab[data-cbsub]').forEach(t=>{
+  t.addEventListener('click', ()=> switchCbSub(t.dataset.cbsub));
+});
+
+function switchReqSub(sub){
+  reqSubTab = sub;
+  document.querySelectorAll('.tab[data-reqsub]').forEach(x=>x.classList.remove('active'));
+  const tabEl = document.querySelector(`.tab[data-reqsub="${sub}"]`);
+  if(tabEl) tabEl.classList.add('active');
+  renderRequests();
+  const reqWrap = document.getElementById('reqTableWrap');
+  if(reqWrap) reqWrap.scrollLeft = 0;
+  const bar = document.getElementById('stickyHScroll');
+  if(bar) bar.scrollLeft = 0;
+  refreshStickyHScroll();
+}
+function switchCandSub(sub){
+  candSubTab = sub;
+  document.querySelectorAll('.tab[data-candsub]').forEach(x=>x.classList.remove('active'));
+  const tabEl = document.querySelector(`.tab[data-candsub="${sub}"]`);
+  if(tabEl) tabEl.classList.add('active');
+  const recruiterWrap = document.getElementById('candRecruiterFilterWrap');
+  const mgrWrap = document.getElementById('candOnboardMgrFilterWrap');
+  if(recruiterWrap) recruiterWrap.style.display = (role==='hr' && sub==='recruit') ? '' : 'none';
+  if(mgrWrap) mgrWrap.style.display = (role==='hr' && sub==='hr') ? '' : 'none';
+  const showCandButtons = canAddCandidate() && !(role === 'hr' && sub === 'hr');
+  document.getElementById('btnAddCandidate').style.display = showCandButtons ? '' : 'none';
+  document.getElementById('btnSelectCandidate').style.display = showCandButtons ? '' : 'none';
+  renderCandidates();
+  const candWrap = document.getElementById('candTableWrap');
+  if(candWrap) candWrap.scrollLeft = 0;
+  const bar = document.getElementById('stickyHScroll');
+  if(bar) bar.scrollLeft = 0;
+  refreshStickyHScroll();
+}
+document.querySelectorAll('.tab[data-candsub]').forEach(t=>{
+  t.addEventListener('click', ()=> switchCandSub(t.dataset.candsub));
+});
+document.querySelectorAll('.tab[data-reqsub]').forEach(t=>{
+  t.addEventListener('click', ()=> switchReqSub(t.dataset.reqsub));
 });
 
 function computeNotifications(){
@@ -2740,7 +3428,13 @@ function closeNotifPanel(){ document.getElementById('notifPanel').classList.remo
 document.getElementById('notifBtn').addEventListener('click', (e)=>{
   e.stopPropagation();
   const panel = document.getElementById('notifPanel');
-  panel.classList.contains('open') ? closeNotifPanel() : (renderNotifications(), panel.classList.add('open'));
+  if(panel.classList.contains('open')){
+    closeNotifPanel();
+  } else {
+    renderNotifications();
+    panel.classList.add('open');
+    clampDropdownToViewport(panel);
+  }
 });
 document.addEventListener('click', (e)=>{
   const panel = document.getElementById('notifPanel');
@@ -2798,6 +3492,7 @@ function bindMacSelect(selectId, btnId, btnLabelId, menuId, opts){
   return { updateLabel, close };
 }
 const cRequestMacSelect = bindMacSelect('c_request', 'c_requestBtn', 'c_requestBtnLabel', 'c_requestMenu', {placeholder: 'Выберите вакансию...'});
+const rvmRequestMacSelect = bindMacSelect('rvm_request', 'rvm_requestBtn', 'rvm_requestBtnLabel', 'rvm_requestMenu', {placeholder: 'Выберите вакансию...'});
 const scCandidateMacSelect = bindMacSelect('sc_candidate', 'sc_candidateBtn', 'sc_candidateBtnLabel', 'sc_candidateMenu', {placeholder: 'Выберите кандидата...'});
 const cSourceMacSelect = bindMacSelect('c_source', 'c_sourceBtn', 'c_sourceBtnLabel', 'c_sourceMenu', {placeholder: 'Не указан'});
 
@@ -2872,6 +3567,7 @@ function maybeAutoSaveCbDateTime(btn){
   if(!cand) return;
   cand.interviewDate = btn.dataset.value || '';
   saveCallboard();
+  clearRowDirty(tr);
   syncCandidateToSchedule(card, cand).then(()=> renderSchedule());
 }
 let rowDateViewYear, rowDateViewMonth;
@@ -2883,6 +3579,7 @@ function closeRowDateMenu(){
 function setRowDateValue(btn, iso){
   btn.dataset.value = iso || '';
   btn.querySelector('.rd-label').textContent = iso ? isoToRu(iso) : 'Выберите дату';
+  btn.dispatchEvent(new CustomEvent('rowdatechange', {bubbles:true}));
 }
 function renderRowDateCalendar(btn){
   const selIso = btn.dataset.value || '';
@@ -3062,16 +3759,67 @@ window.addEventListener('scroll', (e)=>{
 }, true);
 window.addEventListener('resize', ()=>{ if(activeRowTimeBtn) closeRowTimeMenu(); });
 function tabsVisibleForRole(r){
-  if(r === 'hr') return ['requests','candidates','dashboard','schedule','callboard'];
-  if(r === 'hr_recruiting') return ['requests','candidates','dashboard','schedule','callboard'];
+  if(r === 'hr') return ['requests','candidates','callboard','reserve','dashboard','schedule'];
+  if(r === 'hr_recruiting') return ['requests','candidates','callboard','reserve','dashboard','schedule'];
   if(r === 'dept_head') return ['requests','candidates'];
   if(r === 'hr_onboarding') return ['requests','candidates','dashboard'];
   return ['requests'];
 }
+let originalHrUser = null;
+function switchToTeamMember(userId){
+  const target = state.team.find(u=>u.id===userId);
+  if(!target) return;
+  if(!originalHrUser) originalHrUser = currentUser;
+  currentUser = target;
+  role = target.role;
+  applyRolePermissions();
+  renderAll();
+  const menu = document.getElementById('switchRoleMenu');
+  if(menu) menu.style.display = 'none';
+  showToast('Вы вошли как ' + target.name + ' (' + roleLabel(target.role) + ')');
+}
+function returnToOriginalHr(){
+  if(!originalHrUser) return;
+  currentUser = originalHrUser;
+  role = originalHrUser.role;
+  originalHrUser = null;
+  applyRolePermissions();
+  renderAll();
+  const menu = document.getElementById('switchRoleMenu');
+  if(menu) menu.style.display = 'none';
+  showToast('Вы вернулись как ' + currentUser.name);
+}
+function renderSwitchRoleMenu(){
+  const menu = document.getElementById('switchRoleMenu');
+  if(!menu) return;
+  const isHr = originalHrUser ? (originalHrUser.role === 'hr') : (role === 'hr');
+  if(!isHr){ menu.innerHTML=''; return; }
+  const baseUser = originalHrUser || currentUser;
+  const others = state.team.filter(u=>u.id !== baseUser.id);
+  let html = '';
+  if(originalHrUser){
+    html += `<button type="button" data-return-hr style="display:block;width:100%;text-align:left;padding:10px 14px;font-size:12.5px;font-weight:600;background:#f5f5f5;border:none;border-bottom:1px solid var(--line);cursor:pointer;">← Вернуться как ${originalHrUser.name}</button>`;
+  }
+  html += others.map(u=>`<button type="button" data-switch-user="${u.id}" style="display:block;width:100%;text-align:left;padding:10px 14px;font-size:12.5px;background:${(currentUser && currentUser.id===u.id) ? '#eef0f4' : '#fff'};border:none;border-bottom:1px solid var(--line);cursor:pointer;">${u.name}<br><span style="font-size:11px;color:var(--ink-soft);">${roleLabel(u.role)}</span></button>`).join('');
+  menu.innerHTML = html;
+  menu.querySelectorAll('[data-switch-user]').forEach(btn=>{
+    btn.addEventListener('click', ()=> switchToTeamMember(btn.dataset.switchUser));
+  });
+  const retBtn = menu.querySelector('[data-return-hr]');
+  if(retBtn) retBtn.addEventListener('click', returnToOriginalHr);
+}
+document.addEventListener('click', (e)=>{
+  const menu = document.getElementById('switchRoleMenu');
+  if(!menu || menu.style.display !== 'block') return;
+  if(menu.contains(e.target)) return;
+  menu.style.display = 'none';
+});
+
 function applyRolePermissions(){
   document.getElementById('btnAddRequest').style.display = canAddRequest() ? '' : 'none';
-  document.getElementById('btnAddCandidate').style.display = canAddCandidate() ? '' : 'none';
-  document.getElementById('btnSelectCandidate').style.display = canAddCandidate() ? '' : 'none';
+  const showCandButtons = canAddCandidate() && !(role === 'hr' && candSubTab === 'hr');
+  document.getElementById('btnAddCandidate').style.display = showCandButtons ? '' : 'none';
+  document.getElementById('btnSelectCandidate').style.display = showCandButtons ? '' : 'none';
   document.getElementById('btnAddCallboard').style.display = canEditCallboard() ? '' : 'none';
   document.getElementById('btnSaveSchedule').style.display = canEditSchedule() ? '' : 'none';
 
@@ -3090,7 +3838,51 @@ function applyRolePermissions(){
     el.style.display = showPriority ? '' : 'none';
   });
 
-  document.getElementById('btnOpenTeam').style.display = (role === 'hr') ? '' : 'none';
+  const reqRecruiterFilterWrap = document.getElementById('reqRecruiterFilterWrap');
+  if(reqRecruiterFilterWrap){
+    if(role === 'hr'){
+      reqRecruiterFilterWrap.style.display = '';
+    } else {
+      reqRecruiterFilterWrap.style.display = 'none';
+      reqRecruiterFilter = '';
+    }
+  }
+  const candSubtabsWrap = document.getElementById('candSubtabs');
+  if(candSubtabsWrap){
+    if(role === 'hr'){
+      candSubtabsWrap.style.display = '';
+    } else {
+      candSubtabsWrap.style.display = 'none';
+      candSubTab = 'recruit';
+      candOnboardMgrFilter = '';
+    }
+  }
+  const candRecruiterFilterWrap = document.getElementById('candRecruiterFilterWrap');
+  if(candRecruiterFilterWrap){
+    if(role === 'hr' && candSubTab === 'recruit'){
+      candRecruiterFilterWrap.style.display = '';
+    } else {
+      candRecruiterFilterWrap.style.display = 'none';
+      if(role !== 'hr') candRecruiterFilter = '';
+    }
+  }
+  const candOnboardMgrFilterWrap = document.getElementById('candOnboardMgrFilterWrap');
+  if(candOnboardMgrFilterWrap){
+    if(role === 'hr' && candSubTab === 'hr'){
+      candOnboardMgrFilterWrap.style.display = '';
+    } else {
+      candOnboardMgrFilterWrap.style.display = 'none';
+      if(role !== 'hr') candOnboardMgrFilter = '';
+    }
+  }
+
+  document.getElementById('btnOpenTeam').style.display = (role === 'hr' && !originalHrUser) ? '' : 'none';
+  const switchBtn = document.getElementById('btnSwitchRole');
+  if(switchBtn){
+    const showSwitch = originalHrUser ? true : (role === 'hr');
+    switchBtn.style.display = showSwitch ? '' : 'none';
+    switchBtn.textContent = originalHrUser ? ('Тест: ' + currentUser.name) : 'Сменить роль (тест)';
+  }
   const label = document.getElementById('currentUserLabel');
   if(label && currentUser){
     label.textContent = currentUser.name + ' · ' + roleLabel(role);
@@ -3164,18 +3956,8 @@ document.getElementById('btnSaveSchedule').addEventListener('click', saveSchedul
 
 const reportMonthPicker = createMacMonthPicker('reportMonth','reportMonthBtn','reportMonthPicker');
 document.getElementById('reportMonth').addEventListener('change', renderDashboard);
-document.getElementById('btnAllTime').addEventListener('click', ()=>{
-  document.getElementById('reportMonth').value = '';
-  reportMonthPicker.updateBtn();
-  renderDashboard();
-});
 const weeklyFilterPicker = createMacWeekPicker('weeklyFilter','weeklyFilterBtn','weeklyCalendar');
 document.getElementById('weeklyFilter').addEventListener('change', renderWeeklyReport);
-document.getElementById('btnWeeklyReset').addEventListener('click', ()=>{
-  document.getElementById('weeklyFilter').value = '';
-  weeklyFilterPicker.updateBtn();
-  renderWeeklyReport();
-});
 
 let cbFilterRecruiter = '';
 const PIPELINE_STAGES = [
@@ -3184,6 +3966,205 @@ const PIPELINE_STAGES = [
   {key:"Принят на стажировку", label:"Принят на стажировку"},
   {key:"Отказ", label:"Отказ"},
 ];
+function renderReserve(){
+  const tbody = document.getElementById('reserveBody');
+  if(!tbody) return;
+  const list = state.reserve || [];
+  if(!list.length){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="6">Резерв пока пуст.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(rv=>{
+    const resumeHtml = rv.resumeData
+      ? `<a class="resume-link" href="${rv.resumeData}" target="_blank" rel="noopener" download="${(rv.resumeName||'resume').replace(/"/g,'')}">📄 Открыть</a>`
+      : '<span class="no-resume">—</span>';
+    const commentCell = rv.note
+      ? `<button type="button" class="comment-pill" data-reserve-comment="${rv.id}" title="Открыть комментарий">💬 Открыть</button>`
+      : `<button type="button" class="comment-pill add" data-reserve-comment="${rv.id}" title="Добавить комментарий">✏️ Добавить</button>`;
+    return `<tr data-id="${rv.id}">
+      <td>${rv.position || ''}</td>
+      <td>${rv.name || ''}</td>
+      <td>${rv.phone || ''}</td>
+      <td>${resumeHtml}</td>
+      <td>${commentCell}</td>
+      <td style="white-space:nowrap;">
+        <button class="icon-btn" data-reserve-edit="${rv.id}" title="Изменить">✎</button>
+        <button class="icon-btn" data-reserve-del="${rv.id}" title="Удалить">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+  tbody.querySelectorAll('[data-reserve-edit]').forEach(btn=>{
+    btn.addEventListener('click', ()=> openReserveEditor(btn.dataset.reserveEdit));
+  });
+  tbody.querySelectorAll('[data-reserve-comment]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const rv = state.reserve.find(r=>r.id===btn.dataset.reserveComment);
+      if(!rv) return;
+      openReserveTextEditor(rv.id, 'Комментарий — ' + (rv.name || 'кандидат'), rv.note);
+    });
+  });
+  tbody.querySelectorAll('[data-reserve-del]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const ok = await showConfirm('Удалить кандидата из резерва? Это действие нельзя отменить.');
+      if(!ok) return;
+      state.reserve = state.reserve.filter(r=>r.id!==btn.dataset.reserveDel);
+      await saveReserve();
+      renderReserve();
+      showToast('Удалено из резерва');
+    });
+  });
+  refreshStickyHScroll();
+}
+
+let pendingReserveResume = null;
+let editingReserveId = null;
+function openReserveEditor(id){
+  const overlayReserve = document.getElementById('overlayReserve');
+  const rv = id ? state.reserve.find(r=>r.id===id) : null;
+  editingReserveId = rv ? rv.id : null;
+  document.getElementById('reserveModalTitle').textContent = rv ? 'Изменить кандидата в резерве' : 'Добавить в резерв';
+  document.getElementById('rv_name').value = rv ? (rv.name||'') : '';
+  document.getElementById('rv_phone').value = rv ? (rv.phone||'') : '';
+  document.getElementById('rv_position').value = rv ? (rv.position||'') : '';
+  document.getElementById('rv_note').value = rv ? (rv.note||'') : '';
+  document.getElementById('rv_resume').value = '';
+  document.getElementById('rv_resume_name').textContent = rv && rv.resumeName ? ('✓ ' + rv.resumeName) : '';
+  pendingReserveResume = rv ? { name: rv.resumeName||'', dataUrl: rv.resumeData||'' } : null;
+  overlayReserve.classList.add('active');
+}
+document.getElementById('btnAddReserve').addEventListener('click', ()=> openReserveEditor(null));
+document.getElementById('rv_resume').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  const nameEl = document.getElementById('rv_resume_name');
+  if(!file){ return; }
+  if(file.size > MAX_RESUME_BYTES){
+    showToast('Файл слишком большой (максимум 3 МБ)', 'warn');
+    e.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    pendingReserveResume = { name: file.name, dataUrl: reader.result };
+    nameEl.textContent = '✓ ' + file.name;
+  };
+  reader.onerror = ()=>{
+    showToast('Не удалось прочитать файл', 'warn');
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('saveReserve').addEventListener('click', async ()=>{
+  const name = document.getElementById('rv_name').value.trim();
+  if(!name){ showToast('Укажите ФИО кандидата', 'warn'); return; }
+  const data = {
+    name,
+    phone: document.getElementById('rv_phone').value.trim(),
+    position: document.getElementById('rv_position').value.trim(),
+    note: document.getElementById('rv_note').value.trim(),
+    resumeName: pendingReserveResume ? pendingReserveResume.name : '',
+    resumeData: pendingReserveResume ? pendingReserveResume.dataUrl : ''
+  };
+  if(editingReserveId){
+    const rv = state.reserve.find(r=>r.id===editingReserveId);
+    Object.assign(rv, data);
+  } else {
+    state.reserve.push({ id: uid(), addedAt: nowISO(), ...data });
+  }
+  await saveReserve();
+  document.getElementById('overlayReserve').classList.remove('active');
+  renderReserve();
+  showToast('Резерв обновлён');
+});
+
+async function callClaudeAPI(systemPrompt, userText){
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userText }]
+    })
+  });
+  const data = await response.json();
+  const textBlocks = (data.content || []).filter(b=>b.type==='text').map(b=>b.text);
+  return textBlocks.join('\n');
+}
+
+const overlayReserveMatch = document.getElementById('overlayReserveMatch');
+document.getElementById('btnReserveMatch').addEventListener('click', ()=>{
+  const openReqs = state.requests.filter(r=> r.status === "Начать поиск" && r.vacancyStatus !== "Закрыта");
+  const sel = document.getElementById('rvm_request');
+  sel.innerHTML = openReqs.map(r=>`<option value="${r.id}">${r.position} · ${r.branch}</option>`).join('') || `<option value="">Нет активных вакансий</option>`;
+  if(rvmRequestMacSelect) rvmRequestMacSelect.updateLabel();
+  document.getElementById('rvm_results').innerHTML = '';
+  overlayReserveMatch.classList.add('active');
+});
+document.getElementById('rvm_run').addEventListener('click', async ()=>{
+  const reqId = document.getElementById('rvm_request').value;
+  const req = state.requests.find(r=>r.id===reqId);
+  const resultsEl = document.getElementById('rvm_results');
+  if(!req){ showToast('Выберите вакансию', 'warn'); return; }
+  if(!state.reserve.length){ showToast('Резерв пуст', 'warn'); return; }
+  resultsEl.innerHTML = `<div style="color:var(--ink-soft);padding:12px 0;">Подбираю кандидатов...</div>`;
+  const candidatesList = state.reserve.map(rv => `ID: ${rv.id}\nИмя: ${rv.name}\nЖелаемая позиция: ${rv.position || 'не указана'}\nКомментарий: ${rv.note || 'нет'}`).join('\n---\n');
+  const systemPrompt = "Ты помогаешь HR-рекрутеру подобрать кандидатов из резерва под открытую вакансию. Отвечай ТОЛЬКО валидным JSON-массивом, без пояснений и markdown-разметки. Формат: [{\"id\":\"...\",\"score\":0-100,\"reason\":\"краткое объяснение на русском, 1 предложение\"}]. Включай только кандидатов с score >= 40, отсортированных по убыванию score.";
+  const userText = `Вакансия: ${req.position}\nФилиал: ${req.branch}\nТребования: ${req.requirements || 'не указаны'}\n\nКандидаты в резерве:\n${candidatesList}`;
+  try{
+    const raw = await callClaudeAPI(systemPrompt, userText);
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    if(!Array.isArray(parsed) || !parsed.length){
+      resultsEl.innerHTML = `<div style="color:var(--ink-soft);padding:12px 0;">Подходящих кандидатов не найдено.</div>`;
+      return;
+    }
+    resultsEl.innerHTML = parsed.map(p=>{
+      const rv = state.reserve.find(r=>r.id===p.id);
+      if(!rv) return '';
+      return `<div style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>${rv.name}</strong>
+          <span style="background:rgba(30,58,138,.85);color:#FFFFFF;padding:2px 10px;border-radius:8px;font-weight:700;font-size:13px;">${p.score}%</span>
+        </div>
+        <div style="color:var(--ink-soft);font-size:13px;margin:6px 0 10px;">${p.reason || ''}</div>
+        <button class="btn btn-ghost btn-sm" data-reserve-to-cand="${rv.id}" data-req="${req.id}">Добавить кандидатом на эту вакансию</button>
+      </div>`;
+    }).join('');
+    resultsEl.querySelectorAll('[data-reserve-to-cand]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const rvId = btn.dataset.reserveToCand;
+        const rv = state.reserve.find(r=>r.id===rvId);
+        if(!rv) return;
+        const targetReq = state.requests.find(x=>x.id===btn.dataset.req);
+        const card = {
+          id: uid(),
+          date: new Date().toISOString().slice(0,10),
+          createdAt: nowISO(),
+          recruiter: (currentUser && currentUser.name) || '',
+          requestId: btn.dataset.req,
+          positionSnapshot: targetReq ? targetReq.position : '',
+          candidates: [{
+            id: uid(),
+            source: 'Резерв', name: rv.name || '', phone: rv.phone || '',
+            contacted: '', comment: rv.note || '', interviewDate: '', interviewTime: '', outcome: '', rejectReason: '',
+            resumeName: rv.resumeName || '', resumeData: rv.resumeData || '', fromAuto: false
+          }]
+        };
+        state.callboard.push(card);
+        await saveCallboard();
+        state.reserve = state.reserve.filter(r=>r.id!==rvId);
+        await saveReserve();
+        renderAll();
+        overlayReserveMatch.classList.remove('active');
+        showToast('Кандидат добавлен в Свод по кандидатам (Воронка)');
+      });
+    });
+  }catch(e){
+    console.error('reserve match failed', e);
+    resultsEl.innerHTML = `<div style="color:#e6675e;padding:12px 0;">Не удалось подобрать кандидатов. Попробуйте ещё раз.</div>`;
+  }
+});
+
 let pipelineDragId = null;
 function renderPipeline(){
   const wrap = document.getElementById('pipelineBoard');
@@ -3240,6 +4221,191 @@ function renderPipeline(){
     });
   });
 }
+let autoSearchQuery = '';
+function autoRecruiterNames(){
+  return cbRecruiterNames();
+}
+function groupAutoLeads(leads){
+  const groups = {};
+  const order = [];
+  leads.forEach(lead=>{
+    const key = (lead.date||'') + '|' + (lead.position||'') + '|' + (lead.branch||'');
+    if(!groups[key]){
+      groups[key] = { date: lead.date||'', position: lead.position||'', branch: lead.branch||'', leads: [] };
+      order.push(key);
+    }
+    groups[key].leads.push(lead);
+  });
+  return order.map(k=>groups[k]).sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+}
+function renderAutoResponse(){
+  const kpiGrid = document.getElementById('autoKpiGrid');
+  const wrap = document.getElementById('autoResponseList');
+  if(!kpiGrid || !wrap) return;
+  const dateFilterEl = document.getElementById('autoDateFilter');
+  const dateVal = dateFilterEl ? dateFilterEl.value : '';
+  const q = autoSearchQuery || '';
+  const allLeads = state.autoLeads || [];
+  const dateFiltered = allLeads.filter(l => !dateVal || l.date === dateVal);
+  const total = dateFiltered.length;
+  const bySource = {};
+  AUTO_RESPONSE_SOURCES.forEach(s=> bySource[s] = dateFiltered.filter(l=>l.source===s).length);
+  const contactedYes = dateFiltered.filter(l=>l.contacted==='yes').length;
+  const contactedNo = dateFiltered.filter(l=>l.contacted==='no').length;
+  const invited = dateFiltered.filter(l=>l.interviewDate).length;
+  const rejected = dateFiltered.filter(l=>l.outcome==='rejected').length;
+  const inProgress = dateFiltered.filter(l=>l.outcome==='progress' || (!l.outcome && !l.capturedBy)).length;
+  kpiGrid.innerHTML = `
+    <div class="kpi accent"><div class="num">${total}</div><div class="lbl">Общее найденное количество кандидатов</div></div>
+    <div class="kpi multi">
+      ${AUTO_RESPONSE_SOURCES.map(s=>`<div class="kpi-row"><span class="kpi-row-lbl">${s}</span><span class="kpi-row-val">${bySource[s]}</span></div>`).join('')}
+    </div>
+    <div class="kpi multi">
+      <div class="kpi-row"><span class="kpi-row-lbl">Смогли связаться</span><span class="kpi-row-val">${contactedYes}</span></div>
+      <div class="kpi-row"><span class="kpi-row-lbl">Не смогли связаться</span><span class="kpi-row-val">${contactedNo}</span></div>
+    </div>
+    <div class="kpi low"><div class="num">${invited}</div><div class="lbl">Приглашено на собеседование к HR</div></div>
+    <div class="kpi hot"><div class="num">${rejected}</div><div class="lbl">Отказано</div></div>
+    <div class="kpi"><div class="num">${inProgress}</div><div class="lbl">На рассмотрении</div></div>
+  `;
+  const canAccept = (role === 'hr' || role === 'hr_recruiting') && currentUser && (role === 'hr' || autoRecruiterNames().includes(currentUser.name));
+  const groups = groupAutoLeads(dateFiltered);
+  const groupsHtml = groups.map((group)=>{
+    const candRows = group.leads.map((lead)=>{
+      if(q && !(lead.name||'').toLowerCase().includes(q)) return '';
+      const recruiterCell = lead.capturedBy
+        ? `<strong>${lead.capturedBy}</strong>`
+        : (canAccept
+            ? `<button class="btn btn-primary btn-sm" data-save-autorow="${lead.id}">Принять</button>`
+            : '<span class="no-resume">—</span>');
+      const rowBg = lead.capturedBy ? ' style="background:rgba(20,22,27,.05);"' : '';
+      const photoCell = lead.hasPhoto
+        ? `<button type="button" class="resume-link" data-open-file="${(lead.photoPath||'').replace(/"/g,'')}" style="background:none;border:none;cursor:pointer;">📷 Открыть</button>`
+        : '<span class="no-resume">—</span>';
+      const resumeCell = lead.hasResume
+        ? `<button type="button" class="resume-link" data-open-file="${(lead.resumePath||'').replace(/"/g,'')}" style="background:none;border:none;cursor:pointer;">📄 Открыть</button>`
+        : '<span class="no-resume">—</span>';
+      return `<tr data-lead-id="${lead.id}"${rowBg}>
+        <td style="min-width:130px;">${lead.source||'—'}</td>
+        <td style="min-width:190px;"><strong>${lead.name||'—'}</strong></td>
+        <td class="mono" style="min-width:150px;">${lead.phone||'—'}</td>
+        <td style="min-width:100px;">${photoCell}</td>
+        <td style="min-width:100px;">${resumeCell}</td>
+        <td style="min-width:220px;">${recruiterCell}</td>
+      </tr>`;
+    }).filter(Boolean).join('');
+    if(!candRows) return '';
+    return `<div class="card" style="margin-bottom:20px;padding:0;">
+      <div class="callboard-head" style="grid-template-columns:110px 1fr;">
+        <div><div class="cb-date mono">${group.date ? isoToRu(group.date) : '—'}</div></div>
+        <div><div class="cb-position"><strong>${group.position||'Без указания вакансии'}</strong>${group.branch ? `<span class="mono" style="color:var(--ink-soft);font-size:11.5px;"> · ${group.branch}</span>` : ''}</div></div>
+      </div>
+      <div class="table-wrap">
+      <table>
+        <thead><tr><th>Источник</th><th>Ф.И.О кандидата</th><th>Номер телефона</th><th>Фото</th><th>Резюме</th><th>Рекрутёр</th></tr></thead>
+        <tbody>${candRows}</tbody>
+      </table>
+      </div>
+    </div>`;
+  }).filter(Boolean).join('');
+  wrap.innerHTML = groupsHtml || `<div class="card" style="padding:40px;text-align:center;color:var(--ink-soft);font-size:13px;">${q || dateVal ? 'Ничего не найдено по выбранным фильтрам.' : 'Пока нет автоматически поступивших кандидатов из Telegram-бота.'}</div>`;
+
+  wrap.querySelectorAll('[data-open-file]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const path = btn.dataset.openFile;
+      if(!path) return;
+      btn.textContent = 'Открываю…';
+      const url = await getSignedFileUrl(path);
+      btn.textContent = btn.textContent.includes('Открываю') ? (path.includes('/photo') ? '📷 Открыть' : '📄 Открыть') : btn.textContent;
+      if(url) window.open(url, '_blank', 'noopener');
+      else showToast('Не удалось открыть файл', 'warn');
+    });
+  });
+
+  wrap.querySelectorAll('[data-save-autorow]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const leadId = btn.dataset.saveAutorow;
+      const lead = (state.autoLeads||[]).find(l=>l.id===leadId);
+      if(!lead || !currentUser) return;
+      btn.disabled = true; btn.textContent = 'Принимаю…';
+      let resumeName = '', resumeData = '';
+      if(lead.hasResume && lead.resumePath){
+        try{
+          const url = await getSignedFileUrl(lead.resumePath);
+          if(url){
+            const resp = await fetch(url);
+            const blob = await resp.blob();
+            resumeData = await new Promise((res)=>{ const r = new FileReader(); r.onload = ()=>res(r.result); r.readAsDataURL(blob); });
+            resumeName = 'Резюме_' + (lead.name||'кандидат').split(' ')[0] + '.pdf';
+          }
+        }catch(e){ console.error('resume fetch failed', e); }
+      }
+      const today = todayStr();
+      const reqIdForCard = lead.requestId || '';
+      let card = state.callboard.find(c => c.date===today && c.recruiter===currentUser.name && (c.requestId||'')===reqIdForCard);
+      if(!card){
+        card = {
+          id: uid(), date: today, createdAt: nowISO(),
+          recruiter: currentUser.name,
+          requestId: reqIdForCard,
+          positionSnapshot: lead.position || 'Без указания вакансии',
+          candidates: []
+        };
+        state.callboard.push(card);
+      }
+      card.candidates.push({
+        id: uid(), source: lead.source || '', name: lead.name || '', phone: lead.phone || '',
+        contacted: '', comment: '', interviewDate: '', interviewTime: '', outcome: '', rejectReason: '',
+        resumeName, resumeData, fromAuto: true, autoLeadId: lead.id
+      });
+      lead.capturedBy = currentUser.name;
+      lead.outcome = 'progress';
+      await saveCallboard();
+      await saveAutoLeads();
+      renderAutoResponse();
+      renderCallboard();
+      showToast('Кандидат перенесён в Свод по кандидатам (Воронка)');
+    });
+  });
+}
+let rejectedSearchQuery = '';
+function renderCbRejected(){
+  const tbody = document.getElementById('cbRejectedBody');
+  if(!tbody) return;
+  const rows = [];
+  (state.callboard || []).forEach(card=>{
+    (card.candidates || []).forEach(cand=>{
+      if(cand.outcome === 'rejected'){
+        rows.push({ date: card.date, position: card.positionSnapshot || '', recruiter: card.recruiter || '', cand });
+      }
+    });
+  });
+  rows.sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+  const q = rejectedSearchQuery || '';
+  const filteredRows = q ? rows.filter(r => (r.cand.name||'').toLowerCase().includes(q)) : rows;
+  if(!filteredRows.length){
+    const emptyMsg = q ? 'По этому имени кандидатов не найдено.' : 'Отказов пока нет.';
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="8">${emptyMsg}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filteredRows.map(r=>{
+    const cand = r.cand;
+    const resumeHtml = cand.resumeData
+      ? `<a class="resume-link" href="${cand.resumeData}" target="_blank" rel="noopener" download="${(cand.resumeName||'resume').replace(/"/g,'')}">Открыть</a>`
+      : '<span class="no-resume">—</span>';
+    return `<tr>
+      <td class="mono">${r.date ? isoToRu(r.date) : '—'}</td>
+      <td>${r.position || '—'}</td>
+      <td>${cand.source || '—'}</td>
+      <td><strong>${cand.name || '—'}</strong></td>
+      <td class="mono">${cand.phone || '—'}</td>
+      <td>${resumeHtml}</td>
+      <td>${r.recruiter || '—'}</td>
+      <td>${cand.rejectReason || '—'}</td>
+    </tr>`;
+  }).join('');
+  refreshStickyHScroll();
+}
 function renderCallboard(){
   const wrap = document.getElementById('callboardList');
   const kpiGrid = document.getElementById('cbKpiGrid');
@@ -3247,7 +4413,11 @@ function renderCallboard(){
   const isObserver = !canEditCallboard();
   const dateVal = document.getElementById('cbDateFilter').value;
   const q = cbSearchQuery || '';
+  const ownRecruiterName = (role === 'hr_recruiting' && currentUser) ? currentUser.name : '';
+  const recruiterFilterWrap = document.querySelector('.cb-filter-recruiter');
+  if(recruiterFilterWrap) recruiterFilterWrap.style.display = ownRecruiterName ? 'none' : '';
   let list = [...state.callboard]
+    .filter(c => !ownRecruiterName || c.recruiter === ownRecruiterName)
     .filter(c => !cbFilterRecruiter || c.recruiter === cbFilterRecruiter)
     .filter(c => !dateVal || c.date === dateVal)
     .sort((a,b)=> (b.date||'').localeCompare(a.date||'') || (b.createdAt||'').localeCompare(a.createdAt||''));
@@ -3293,7 +4463,7 @@ function renderCallboard(){
     const visibleIdx = candList.map((_,i)=>i).filter(i => !q || (candList[i].name||'').toLowerCase().includes(q));
     const candRows = visibleIdx.map(idx=>{
       const cand = candList[idx];
-      const sourceCell = isObserver ? (cand.source || '<span class="no-resume">—</span>') : `<select class="inline" data-field="source"><option value="">—</option>${SOURCE_OPTS.map(s=>`<option value="${s}" ${cand.source===s?'selected':''}>${s}</option>`).join('')}</select>`;
+      const sourceCell = (isObserver || cand.fromAuto) ? (cand.source || '<span class="no-resume">—</span>') : rowSelectHtml('source', SOURCE_OPTS, cand.source, true);
       const nameCell = isObserver ? (cand.name || '<span class="no-resume">—</span>') : `<input class="inline" data-field="name" value="${(cand.name||'').replace(/"/g,'&quot;')}" placeholder="Ф.И.О кандидата">`;
       const phoneCell = isObserver ? (cand.phone || '<span class="no-resume">—</span>') : `<input class="inline" data-field="phone" value="${(cand.phone||'').replace(/"/g,'&quot;')}" placeholder="Номер телефона">`;
       const resumeLink = cand.resumeData ? `<a class="resume-link" href="${cand.resumeData}" target="_blank" rel="noopener" download="${(cand.resumeName||'resume').replace(/"/g,'')}">📄 Открыть</a>` : '';
@@ -3301,14 +4471,14 @@ function renderCallboard(){
         ? (resumeLink || '<span class="no-resume">—</span>')
         : `<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">${resumeLink}<label class="comment-pill ${cand.resumeData?'':'add'}" style="cursor:pointer;">${cand.resumeData?'📎 Заменить':'📎 Загрузить'}<input type="file" accept="application/pdf,.pdf" data-cb-resume="${idx}" style="display:none;"></label></div>`;
       const contactedLabels = {yes:'Смогли связаться', no:'Не смогли связаться'};
-      const contactedCell = isObserver ? (contactedLabels[cand.contacted] || '<span class="no-resume">—</span>') : `<select class="inline" data-field="contacted"><option value="">—</option><option value="yes" ${cand.contacted==='yes'?'selected':''}>Смогли связаться</option><option value="no" ${cand.contacted==='no'?'selected':''}>Не смогли связаться</option></select>`;
+      const contactedCell = isObserver ? (contactedLabels[cand.contacted] || '<span class="no-resume">—</span>') : rowSelectHtml('contacted', CONTACTED_OPTS, cand.contacted, true);
       const commentCell = cand.comment
         ? `<button type="button" class="comment-pill" data-cb-comment="${idx}" title="Открыть комментарий">💬 Открыть</button>`
         : (isObserver ? '<span class="no-resume">—</span>' : `<button type="button" class="comment-pill add" data-cb-comment="${idx}" title="Добавить комментарий">✏️ Добавить</button>`);
       const interviewCell = isObserver
         ? `<span class="mono">${cand.interviewDate ? isoToRu(cand.interviewDate) : '—'}${cand.interviewTime ? ' · '+cand.interviewTime : ''}</span>`
         : `<div style="display:flex;gap:6px;">${rowDateHtml('cbInterviewDate', cand.interviewDate, 'Дата')}<input class="inline" data-field="cbInterviewTime" value="${(cand.interviewTime||'').replace(/"/g,'&quot;')}" placeholder="00:00" style="font-weight:600;min-width:60px;"></div>`;
-      const outcomeLabels = {progress:'На рассмотрении', rejected:'Отказ'};
+      const outcomeLabels = {progress:'На рассмотрении', rejected:'Отказ', reserve:'Резерв'};
       const rejectBtnHtml = cand.outcome === 'rejected'
         ? (cand.rejectReason
             ? `<button type="button" class="comment-pill" data-cb-reject="${idx}" title="Открыть причину">💬 Открыть</button>`
@@ -3316,13 +4486,13 @@ function renderCallboard(){
         : '';
       const outcomeCell = isObserver
         ? `<div style="display:flex;flex-direction:column;gap:6px;">${outcomeLabels[cand.outcome] || '<span class="no-resume">—</span>'}${rejectBtnHtml}</div>`
-        : `<div style="display:flex;flex-direction:column;gap:6px;"><select class="inline" data-field="outcome"><option value="" ${!cand.outcome?'selected':''}>—</option><option value="progress" ${cand.outcome==='progress'?'selected':''}>Принять на рассмотрение</option><option value="rejected" ${cand.outcome==='rejected'?'selected':''}>Отказ</option></select>${rejectBtnHtml}</div>`;
-      const actionsCell = isObserver ? '' : `<button class="btn btn-primary btn-sm" data-save-cbrow="${idx}">Сохранить</button> <button class="icon-btn" data-del-cbrow="${idx}" title="Удалить строку">✕</button>`;
-      const rowBg = cand.outcome === 'progress' ? ' style="background:rgba(47,168,79,.12);"' : (cand.outcome === 'rejected' ? ' style="background:rgba(226,61,40,.12);"' : '');
+        : `<div style="display:flex;flex-direction:column;gap:6px;">${rowSelectHtml('outcome', OUTCOME_OPTS, cand.outcome, true)}${rejectBtnHtml}</div>`;
+      const actionsCell = isObserver ? '' : `${unsavedDotHtml()}<button class="btn btn-primary btn-sm" data-save-cbrow="${idx}">Сохранить</button> <button class="icon-btn" data-del-cbrow="${idx}" title="Удалить строку">✕</button>`;
+      const rowBg = cand.outcome === 'progress' ? ' style="background:rgba(47,168,79,.12);"' : (cand.outcome === 'rejected' ? ' style="background:rgba(226,61,40,.12);"' : (cand.outcome === 'reserve' ? ' style="background:rgba(41,82,227,.10);"' : (cand.contacted === 'no' ? ' style="background:rgba(230,196,40,.18);"' : '')));
       return `<tr data-idx="${idx}"${rowBg}>
         <td style="min-width:150px;">${sourceCell}</td>
         <td style="min-width:210px;">${nameCell}</td>
-        <td class="mono" style="min-width:165px;">${phoneCell}</td>
+        <td class="mono" style="min-width:200px;">${phoneCell}</td>
         <td style="min-width:140px;">${resumeCellHtml}</td>
         <td style="min-width:170px;">${contactedCell}</td>
         <td style="min-width:150px;">${commentCell}</td>
@@ -3340,7 +4510,7 @@ function renderCallboard(){
       </div>
       <div class="table-wrap">
       <table>
-        <thead><tr><th style="min-width:150px;">Источник</th><th style="min-width:210px;">Ф.И.О кандидата</th><th style="min-width:165px;">Номер телефона</th><th style="min-width:140px;">Резюме</th><th style="min-width:170px;">Дозвон</th><th style="min-width:150px;">Комментарий</th><th style="min-width:230px;">Приглашён на собеседование к HR</th><th style="min-width:230px;">Итог</th><th></th></tr></thead>
+        <thead><tr><th style="min-width:150px;">Источник</th><th style="min-width:210px;">Ф.И.О кандидата</th><th style="min-width:200px;">Номер телефона</th><th style="min-width:140px;">Резюме</th><th style="min-width:170px;">Дозвон</th><th style="min-width:150px;">Комментарий</th><th style="min-width:230px;">Приглашён на собеседование к HR</th><th style="min-width:230px;">Итог</th><th></th></tr></thead>
         <tbody>${candRows}</tbody>
       </table>
       </div>
@@ -3352,6 +4522,7 @@ function renderCallboard(){
     const cardId = cardEl.dataset.cbid;
     const card = state.callboard.find(c=>c.id===cardId);
     if(!card) return;
+    attachDirtyTracking(cardEl.querySelector('tbody'));
 
     cardEl.querySelectorAll('input.inline[data-field="cbInterviewTime"]').forEach(el=>{
       attachTimeMask(el);
@@ -3366,6 +4537,20 @@ function renderCallboard(){
         if(file.size > MAX_RESUME_BYTES){ showToast('Файл слишком большой (максимум 3 МБ)', 'warn'); e.target.value=''; return; }
         const reader = new FileReader();
         reader.onload = async ()=>{
+          // Сохраняем всё, что уже введено в строке, прежде чем перерисовывать таблицу —
+          // иначе загрузка резюме сбросит несохранённые ФИО/телефон/дату собеседования.
+          const nameInput = tr.querySelector('input[data-field="name"]');
+          if(nameInput) cand.name = nameInput.value.trim();
+          const phoneInput = tr.querySelector('input[data-field="phone"]');
+          if(phoneInput) cand.phone = phoneInput.value.trim();
+          const sourceBtn = tr.querySelector('[data-field="source"] .row-select-btn');
+          if(sourceBtn) cand.source = sourceBtn.dataset.value || '';
+          const contactedBtn = tr.querySelector('[data-field="contacted"] .row-select-btn');
+          if(contactedBtn) cand.contacted = contactedBtn.dataset.value || '';
+          const dateBtn = tr.querySelector('.row-date-btn[data-field="cbInterviewDate"]');
+          if(dateBtn) cand.interviewDate = dateBtn.dataset.value || '';
+          const timeInput = tr.querySelector('input.inline[data-field="cbInterviewTime"]');
+          if(timeInput) cand.interviewTime = timeInput.value.trim();
           cand.resumeName = file.name;
           cand.resumeData = reader.result;
           await saveCallboard();
@@ -3376,7 +4561,7 @@ function renderCallboard(){
         reader.readAsDataURL(file);
       });
     });
-    cardEl.querySelectorAll('select.inline[data-field="source"], select.inline[data-field="contacted"], input.inline[data-field="name"], input.inline[data-field="phone"], input.inline[data-field="cbInterviewTime"]').forEach(el=>{
+    cardEl.querySelectorAll('input.inline[data-field="name"], input.inline[data-field="phone"], input.inline[data-field="cbInterviewTime"]').forEach(el=>{
       el.addEventListener('change', async (e)=>{
         const tr = e.target.closest('tr');
         const idx = parseInt(tr.dataset.idx, 10);
@@ -3387,19 +4572,46 @@ function renderCallboard(){
         if(field === 'cbInterviewTime') cand.interviewTime = value;
         else cand[field] = value;
         await saveCallboard();
+        clearRowDirty(tr);
         if(field === 'name' || field === 'phone' || field === 'cbInterviewTime'){
           await syncCandidateToSchedule(card, cand);
           renderSchedule();
         }
       });
     });
-    cardEl.querySelectorAll('select.inline[data-field="outcome"]').forEach(el=>{
-      el.addEventListener('change', async (e)=>{
+    cardEl.querySelectorAll('[data-field="source"] .row-select-btn, [data-field="contacted"] .row-select-btn').forEach(btn=>{
+      btn.addEventListener('rowselectchange', async (e)=>{
         const tr = e.target.closest('tr');
         const idx = parseInt(tr.dataset.idx, 10);
         const cand = card.candidates[idx];
         if(!cand) return;
-        cand.outcome = e.target.value;
+        const field = e.target.closest('.row-select').dataset.field;
+        cand[field] = e.target.dataset.value || '';
+        await saveCallboard();
+        clearRowDirty(tr);
+      });
+    });
+    cardEl.querySelectorAll('[data-field="outcome"] .row-select-btn').forEach(btn=>{
+      btn.addEventListener('rowselectchange', async (e)=>{
+        const tr = e.target.closest('tr');
+        const idx = parseInt(tr.dataset.idx, 10);
+        const cand = card.candidates[idx];
+        if(!cand) return;
+        // Сохраняем всё, что уже введено в строке, прежде чем перерисовывать таблицу —
+        // иначе смена «Итога» сбросит несохранённые ФИО/телефон/дату собеседования.
+        const nameInput = tr.querySelector('input[data-field="name"]');
+        if(nameInput) cand.name = nameInput.value.trim();
+        const phoneInput = tr.querySelector('input[data-field="phone"]');
+        if(phoneInput) cand.phone = phoneInput.value.trim();
+        const sourceBtn = tr.querySelector('[data-field="source"] .row-select-btn');
+        if(sourceBtn) cand.source = sourceBtn.dataset.value || '';
+        const contactedBtn = tr.querySelector('[data-field="contacted"] .row-select-btn');
+        if(contactedBtn) cand.contacted = contactedBtn.dataset.value || '';
+        const dateBtn = tr.querySelector('.row-date-btn[data-field="cbInterviewDate"]');
+        if(dateBtn) cand.interviewDate = dateBtn.dataset.value || '';
+        const timeInput = tr.querySelector('input.inline[data-field="cbInterviewTime"]');
+        if(timeInput) cand.interviewTime = timeInput.value.trim();
+        cand.outcome = e.target.dataset.value || '';
         await saveCallboard();
         renderCallboard();
       });
@@ -3412,12 +4624,32 @@ function renderCallboard(){
         if(!cand) return;
         cand.name = tr.querySelector('input[data-field="name"]').value.trim();
         cand.phone = tr.querySelector('input[data-field="phone"]').value.trim();
-        const sourceSel = tr.querySelector('select[data-field="source"]');
-        if(sourceSel) cand.source = sourceSel.value;
-        const contactedSel = tr.querySelector('select[data-field="contacted"]');
-        if(contactedSel) cand.contacted = contactedSel.value;
+        const sourceBtn = tr.querySelector('[data-field="source"] .row-select-btn');
+        if(sourceBtn) cand.source = sourceBtn.dataset.value || '';
+        const contactedBtn = tr.querySelector('[data-field="contacted"] .row-select-btn');
+        if(contactedBtn) cand.contacted = contactedBtn.dataset.value || '';
         cand.interviewDate = tr.querySelector('.row-date-btn[data-field="cbInterviewDate"]').dataset.value || '';
         cand.interviewTime = (tr.querySelector('input.inline[data-field="cbInterviewTime"]').value || '').trim();
+        const outcomeBtn = tr.querySelector('[data-field="outcome"] .row-select-btn');
+        if(outcomeBtn) cand.outcome = outcomeBtn.dataset.value || '';
+        if(cand.outcome === 'reserve'){
+          const req = reqById(card.requestId);
+          state.reserve.push({
+            id: uid(), addedAt: nowISO(),
+            name: cand.name || '', phone: cand.phone || '',
+            position: req ? req.position : (card.positionSnapshot || ''),
+            note: cand.comment || '',
+            resumeName: cand.resumeName || '', resumeData: cand.resumeData || ''
+          });
+          await saveReserve();
+          card.candidates.splice(idx, 1);
+          await saveCallboard();
+          if(cand.id){ await clearScheduleLinkForCandidate(cand.id); renderSchedule(); }
+          renderReserve();
+          renderCallboard();
+          showToast('Кандидат перенесён в резерв');
+          return;
+        }
         await saveCallboard();
         await syncCandidateToSchedule(card, cand);
         renderSchedule();
@@ -3478,7 +4710,13 @@ function renderCallboard(){
 
 let editingCbText = null;
 function openCbTextEditor(cardId, idx, field, title, currentText){
-  editingCbText = {cardId, idx, field};
+  editingCbText = {source:'callboard', cardId, idx, field};
+  document.getElementById('cbTextEditTitle').textContent = title;
+  document.getElementById('cb_text_edit').value = currentText || '';
+  document.getElementById('overlayCbText').classList.add('active');
+}
+function openReserveTextEditor(id, title, currentText){
+  editingCbText = {source:'reserve', id};
   document.getElementById('cbTextEditTitle').textContent = title;
   document.getElementById('cb_text_edit').value = currentText || '';
   document.getElementById('overlayCbText').classList.add('active');
@@ -3514,12 +4752,111 @@ function initCbRecruiterFilter(){
   updateLabel();
 }
 initCbRecruiterFilter();
+function initReqRecruiterFilter(){
+  const wrap = document.getElementById('reqRecruiterFilterWrap');
+  const btn = document.getElementById('reqRecruiterFilterBtn');
+  const label = document.getElementById('reqRecruiterFilterLabel');
+  const menu = document.getElementById('reqRecruiterFilterMenu');
+  if(!wrap || !btn || !label || !menu) return;
+  function renderMenu(){
+    const opts = ['', ...recruiterTeamNames()];
+    menu.innerHTML = opts.map(n=>`
+      <div class="mac-select-item ${n===reqRecruiterFilter?'selected':''}" data-name="${n}">
+        <span>${n || 'Все рекрутёры'}</span><span class="chk">✓</span>
+      </div>`).join('');
+    menu.querySelectorAll('.mac-select-item').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        reqRecruiterFilter = el.dataset.name;
+        updateLabel();
+        close();
+        renderRequests();
+      });
+    });
+  }
+  function updateLabel(){ label.textContent = reqRecruiterFilter || 'Все рекрутёры'; }
+  function open(){ renderMenu(); menu.classList.add('open'); btn.classList.add('open'); }
+  function close(){ menu.classList.remove('open'); btn.classList.remove('open'); }
+  btn.addEventListener('click',(e)=>{ e.stopPropagation(); menu.classList.contains('open') ? close() : open(); });
+  document.addEventListener('click',(e)=>{ if(!menu.contains(e.target) && !btn.contains(e.target)) close(); });
+  updateLabel();
+}
+initReqRecruiterFilter();
+function initCandRecruiterFilter(){
+  const wrap = document.getElementById('candRecruiterFilterWrap');
+  const btn = document.getElementById('candRecruiterFilterBtn');
+  const label = document.getElementById('candRecruiterFilterLabel');
+  const menu = document.getElementById('candRecruiterFilterMenu');
+  if(!wrap || !btn || !label || !menu) return;
+  function renderMenu(){
+    const opts = ['', ...recruiterTeamNames()];
+    menu.innerHTML = opts.map(n=>`
+      <div class="mac-select-item ${n===candRecruiterFilter?'selected':''}" data-name="${n}">
+        <span>${n || 'Все рекрутёры'}</span><span class="chk">✓</span>
+      </div>`).join('');
+    menu.querySelectorAll('.mac-select-item').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        candRecruiterFilter = el.dataset.name;
+        updateLabel();
+        close();
+        renderCandidates();
+      });
+    });
+  }
+  function updateLabel(){ label.textContent = candRecruiterFilter || 'Все рекрутёры'; }
+  function open(){ renderMenu(); menu.classList.add('open'); btn.classList.add('open'); }
+  function close(){ menu.classList.remove('open'); btn.classList.remove('open'); }
+  btn.addEventListener('click',(e)=>{ e.stopPropagation(); menu.classList.contains('open') ? close() : open(); });
+  document.addEventListener('click',(e)=>{ if(!menu.contains(e.target) && !btn.contains(e.target)) close(); });
+  updateLabel();
+}
+initCandRecruiterFilter();
+function initCandOnboardMgrFilter(){
+  const wrap = document.getElementById('candOnboardMgrFilterWrap');
+  const btn = document.getElementById('candOnboardMgrFilterBtn');
+  const label = document.getElementById('candOnboardMgrFilterLabel');
+  const menu = document.getElementById('candOnboardMgrFilterMenu');
+  if(!wrap || !btn || !label || !menu) return;
+  function renderMenu(){
+    const opts = ['', ...onboardingManagerNames()];
+    menu.innerHTML = opts.map(n=>`
+      <div class="mac-select-item ${n===candOnboardMgrFilter?'selected':''}" data-name="${n}">
+        <span>${n || 'Все менеджеры'}</span><span class="chk">✓</span>
+      </div>`).join('');
+    menu.querySelectorAll('.mac-select-item').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        candOnboardMgrFilter = el.dataset.name;
+        updateLabel();
+        close();
+        renderCandidates();
+      });
+    });
+  }
+  function updateLabel(){ label.textContent = candOnboardMgrFilter || 'Все менеджеры'; }
+  function open(){ renderMenu(); menu.classList.add('open'); btn.classList.add('open'); }
+  function close(){ menu.classList.remove('open'); btn.classList.remove('open'); }
+  btn.addEventListener('click',(e)=>{ e.stopPropagation(); menu.classList.contains('open') ? close() : open(); });
+  document.addEventListener('click',(e)=>{ if(!menu.contains(e.target) && !btn.contains(e.target)) close(); });
+  updateLabel();
+}
+initCandOnboardMgrFilter();
 const cbDateFilterPicker = createMacSimpleDatePicker('cbDateFilter','cbDateFilterBtn','cbDateFilterCal','Все даты');
 document.getElementById('cbDateFilter').addEventListener('change', renderCallboard);
 let cbSearchQuery = '';
 document.getElementById('cbNameSearch').addEventListener('input', (e)=>{
   cbSearchQuery = e.target.value.trim().toLowerCase();
   renderCallboard();
+});
+
+const autoDateFilterPicker = createMacSimpleDatePicker('autoDateFilter','autoDateFilterBtn','autoDateFilterCal','Все даты');
+document.getElementById('autoDateFilter').addEventListener('change', renderAutoResponse);
+document.getElementById('autoNameSearch').addEventListener('input', (e)=>{
+  autoSearchQuery = e.target.value.trim().toLowerCase();
+  renderAutoResponse();
+});
+
+document.getElementById('rejectedNameSearch').addEventListener('input', (e)=>{
+  rejectedSearchQuery = e.target.value.trim().toLowerCase();
+  renderCbRejected();
 });
 
 const cbRecruiterMacSelect = bindMacSelect('cb_recruiter', 'cb_recruiterBtn', 'cb_recruiterBtnLabel', 'cb_recruiterMenu', {placeholder: 'Выберите рекрутёра...'});
@@ -3577,19 +4914,30 @@ document.getElementById('saveCallboard').addEventListener('click', async ()=>{
 const overlayRequest = document.getElementById('overlayRequest');
 document.getElementById('btnAddRequest').addEventListener('click', ()=>{
   ['f_manager','f_position','f_requirements'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f_headcount').value = '1';
+  const managerField = document.getElementById('f_manager');
+  if(role === 'dept_head' && currentUser){
+    managerField.value = currentUser.name;
+    managerField.readOnly = true;
+  } else {
+    managerField.readOnly = false;
+  }
   overlayRequest.classList.add('active');
 });
 document.getElementById('saveRequest').addEventListener('click', async ()=>{
-  const manager = document.getElementById('f_manager').value.trim();
+  const manager = (role === 'dept_head' && currentUser) ? currentUser.name : document.getElementById('f_manager').value.trim();
   const position = document.getElementById('f_position').value.trim();
   if(!manager || !position){ showToast('Укажите ФИО руководителя и должность', 'warn'); return; }
+  const headcountRaw = parseInt(document.getElementById('f_headcount').value, 10);
+  const headcount = (headcountRaw && headcountRaw > 0) ? headcountRaw : 1;
   const rec = {
     id: uid(), num: nextNum(state.requests), date: todayStr(),
     branch: document.getElementById('f_branch').value,
     manager, position,
     reason: document.getElementById('f_reason').value,
     requirements: document.getElementById('f_requirements').value.trim(),
-    status: "Новая", priority: "", recruiter: "", vacancyStatus: ""
+    status: "Новая", priority: "", recruiter: "", vacancyStatus: "",
+    headcount, hiredCount: 0, closed: false
   };
   state.requests.push(rec);
   await saveRequests();
@@ -3601,7 +4949,10 @@ document.getElementById('saveRequest').addEventListener('click', async ()=>{
 const overlayCandidate = document.getElementById('overlayCandidate');
 document.getElementById('btnAddCandidate').addEventListener('click', ()=>{
   const sel = document.getElementById('c_request');
-  const approved = state.requests.filter(r=>r.status==="Начать поиск");
+  let approved = state.requests.filter(r=>r.status==="Начать поиск");
+  if(role === 'hr_recruiting' && currentUser){
+    approved = approved.filter(r=>r.recruiter === currentUser.name);
+  }
   if(!approved.length){
     showToast('Пока нет одобренных вакансий. Дождитесь согласования HR Director', 'warn');
     return;
@@ -3650,7 +5001,8 @@ document.getElementById('saveCandidate').addEventListener('click', async ()=>{
     stageAt: nowISO(), probationEndDate: "", probationResult: "",
     history: [{date: new Date().toLocaleString('ru-RU'), role: roleLabel(), text: 'Кандидат добавлен и отправлен руководителю'}],
     resumeName: pendingResume ? pendingResume.name : "",
-    resumeData: pendingResume ? pendingResume.dataUrl : ""
+    resumeData: pendingResume ? pendingResume.dataUrl : "",
+    recruiter: (currentUser && currentUser.name) || ""
   };
   state.candidates.push(rec);
   await saveCandidates();
@@ -3666,7 +5018,7 @@ function progressCandidatesList(){
   const out = [];
   state.callboard.forEach(card=>{
     (card.candidates||[]).forEach(cand=>{
-      if(cand.outcome === 'progress' && cand.id) out.push({card, cand});
+      if(cand.outcome === 'progress' && cand.id && !cand.selectedIntoCandidates) out.push({card, cand});
     });
   });
   return out;
@@ -3739,10 +5091,13 @@ document.getElementById('saveSelectedCandidate').addEventListener('click', async
     stageAt: nowISO(), probationEndDate: "", probationResult: "",
     history: [{date: new Date().toLocaleString('ru-RU'), role: roleLabel(), text: 'Кандидат выбран из Воронки и отправлен руководителю'}],
     resumeName: cand.resumeName || "",
-    resumeData: cand.resumeData || ""
+    resumeData: cand.resumeData || "",
+    recruiter: (currentUser && currentUser.name) || ""
   };
   state.candidates.push(rec);
+  cand.selectedIntoCandidates = true;
   await saveCandidates();
+  await saveCallboard();
   overlaySelectCandidate.classList.remove('active');
   scPendingComment = '';
   renderAll();
@@ -3769,6 +5124,28 @@ document.getElementById('saveManagerComment').addEventListener('click', async ()
   showToast('Комментарий сохранён');
 });
 
+document.getElementById('saveHrReject').addEventListener('click', async ()=>{
+  if(!editingHrRejectId) return;
+  const rec = state.candidates.find(c=>c.id===editingHrRejectId);
+  if(!rec){ document.getElementById('overlayHrReject').classList.remove('active'); return; }
+  const text = document.getElementById('hr_reject_text').value.trim();
+  if(!text){ showToast('Укажите причину отказа', 'warn'); return; }
+  const oldStatus = rec.status;
+  rec.status = "Отказ";
+  rec.archived = true;
+  rec.rejectReason = text;
+  rec.rejectReasonCode = "";
+  rec.managerComment = "";
+  logHistory(rec, `Кандидат отказался сам (HR по подбору): ${text}`);
+  if(oldStatus !== rec.status){
+    rec.stageAt = nowISO();
+  }
+  await saveCandidates();
+  document.getElementById('overlayHrReject').classList.remove('active');
+  renderCandidates(); renderDashboard();
+  showToast('Кандидат перенесён в архив');
+});
+
 document.getElementById('saveSchedComment').addEventListener('click', async ()=>{
   if(editingSchedIdx === null) return;
   const iso = document.getElementById('schedDate').value;
@@ -3784,10 +5161,21 @@ document.getElementById('saveSchedComment').addEventListener('click', async ()=>
 
 document.getElementById('saveCbText').addEventListener('click', async ()=>{
   if(!editingCbText) return;
+  const text = document.getElementById('cb_text_edit').value.trim();
+  if(editingCbText.source === 'reserve'){
+    const rv = state.reserve.find(r=>r.id===editingCbText.id);
+    if(rv){
+      rv.note = text;
+      await saveReserve();
+    }
+    document.getElementById('overlayCbText').classList.remove('active');
+    renderReserve();
+    showToast('Сохранено');
+    return;
+  }
   const card = state.callboard.find(c=>c.id===editingCbText.cardId);
   const cand = card ? card.candidates[editingCbText.idx] : null;
   if(!cand){ document.getElementById('overlayCbText').classList.remove('active'); return; }
-  const text = document.getElementById('cb_text_edit').value.trim();
   cand[editingCbText.field] = text;
   await saveCallboard();
   document.getElementById('overlayCbText').classList.remove('active');
@@ -3821,10 +5209,12 @@ function hideAuthScreen(){
 }
 function startAutoRefresh(){
   setInterval(async ()=>{
-    const modalOpen = overlayRequest.classList.contains('active') || overlayCandidate.classList.contains('active') || document.getElementById('overlayConfirm').classList.contains('active') || document.getElementById('overlayTeam').classList.contains('active');
+    const modalOpen = document.querySelectorAll('.overlay.active').length > 0;
+    const menuOpen = document.querySelector('.row-select-menu.open, .row-date-menu.open, .time-wheel-menu.open, .mac-calendar.open, .mac-month-picker.open, .mac-select-menu.open, .notif-panel.open');
     const active = document.activeElement;
     const isTyping = active && ['INPUT','SELECT','TEXTAREA'].includes(active.tagName);
-    if(modalOpen || isTyping) return;
+    const isEditingRow = active && active.closest && active.closest('tr');
+    if(modalOpen || menuOpen || isTyping || isEditingRow) return;
     await loadState();
     renderAll();
   }, 300000);
@@ -3897,8 +5287,23 @@ document.getElementById('btnLoginSubmit').addEventListener('click', async ()=>{
   errEl.style.display = 'none';
   const btn = document.getElementById('btnLoginSubmit');
   btn.disabled = true;
+  errEl.textContent = 'Вход...';
+  errEl.style.display = '';
+  errEl.style.color = '';
   try{
-    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    let data, error;
+    const maxAttempts = 3;
+    for(let attempt = 1; attempt <= maxAttempts; attempt++){
+      try{
+        const res = await sb.auth.signInWithPassword({ email, password: pass });
+        data = res.data; error = res.error;
+        break;
+      }catch(networkErr){
+        if(attempt === maxAttempts) throw networkErr;
+        errEl.textContent = 'Проблема с сетью, повторяю попытку (' + attempt + '/' + maxAttempts + ')...';
+        await new Promise(r => setTimeout(r, 800 * attempt));
+      }
+    }
     if(error){
       errEl.textContent = 'Неверный логин или пароль';
       errEl.style.display = '';
@@ -3914,7 +5319,7 @@ document.getElementById('btnLoginSubmit').addEventListener('click', async ()=>{
     await completeLogin(user);
   }catch(e){
     console.error('login failed', e);
-    errEl.textContent = 'Не удалось войти — попробуйте снова';
+    errEl.textContent = 'Не удалось соединиться с сервером. Проверьте интернет-соединение и попробуйте снова.';
     errEl.style.display = '';
   }finally{
     btn.disabled = false;
@@ -3968,8 +5373,8 @@ function openTeamEditForm(id){
   document.getElementById('team_name').value = u.name;
   document.getElementById('team_email').value = u.email;
   document.getElementById('team_password').value = '';
-  document.getElementById('team_password').placeholder = 'Пароль меняется самим сотрудником';
-  document.getElementById('team_password').disabled = true;
+  document.getElementById('team_password').placeholder = 'Оставьте пустым, чтобы не менять';
+  document.getElementById('team_password').disabled = false;
   document.getElementById('team_role').value = (u.role === 'hr') ? 'hr_recruiting' : u.role;
   if(teamRoleMacSelect) teamRoleMacSelect.updateLabel();
   document.getElementById('teamFormTitle').textContent = 'Изменить сотрудника';
@@ -3991,6 +5396,7 @@ document.getElementById('team_delete').addEventListener('click', async ()=>{
   if(ok) state.team = state.team.filter(x=>x.id!==editId);
   resetTeamForm();
   renderTeamList();
+  renderRequests();
   showToast(ok ? 'Сотрудник удалён' : 'Не удалось удалить — попробуйте снова');
 });
 
@@ -4008,11 +5414,13 @@ document.getElementById('team_save').addEventListener('click', async ()=>{
   const password = document.getElementById('team_password').value;
   const roleVal = document.getElementById('team_role').value;
   if(!name || !email || (!editId && !password)){ showToast('Заполните все поля', 'warn'); return; }
+  if(password && password.length < 4){ showToast('Пароль слишком короткий (минимум 4 символа)', 'warn'); return; }
   const dup = state.team.find(u => u.email.toLowerCase() === email && u.id !== editId);
   if(dup){ showToast('Этот логин уже используется', 'warn'); return; }
 
   document.getElementById('team_save').disabled = true;
   let ok = false;
+  let passwordOk = true;
   if(editId){
     const u = state.team.find(x=>x.id===editId);
     if(!u) return;
@@ -4021,6 +5429,7 @@ document.getElementById('team_save').addEventListener('click', async ()=>{
     if(ok){
       u.name = name; u.email = email; u.role = finalRole;
       if(currentUser && currentUser.id === u.id) currentUser = u;
+      if(password){ passwordOk = await resetTeamMemberPassword(editId, password); }
     }
   } else {
     ok = await addTeamMember({ name, email, password, role: roleVal });
@@ -4030,8 +5439,13 @@ document.getElementById('team_save').addEventListener('click', async ()=>{
     await loadTeamFromDB();
     resetTeamForm();
     renderTeamList();
+    renderRequests();
     if(currentUser) applyRolePermissions();
-    showToast(editId ? 'Данные сотрудника обновлены' : 'Сотрудник добавлен. Он сможет войти после подтверждения email');
+    if(editId){
+      showToast(passwordOk ? 'Данные сотрудника обновлены' + (password ? ', пароль изменён' : '') : 'Данные обновлены, но пароль изменить не удалось');
+    } else {
+      showToast('Сотрудник добавлен. Он сможет войти после подтверждения email');
+    }
   }
 });
 
